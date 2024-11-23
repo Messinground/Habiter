@@ -1,0 +1,23 @@
+<!-- _includes/navbar.html -->
+
+<nav>
+  <ul>
+    {% assign main_pages = site.html_pages | where_exp: "page", "page.path contains '/'" %}
+    {% for page in main_pages %}
+      {% assign folder = page.path | split: '/' | first %}
+      {% if folder == '' or folder == page.url %}
+        <li>
+          <a href="{{ page.url }}">{{ page.title | default: 'Home' }}</a>
+          {% assign sub_pages = site.html_pages | where_exp: "p", "p.path startswith page.path | remove: page.name" %}
+          {% if sub_pages.size > 0 %}
+            <ul>
+              {% for sub_page in sub_pages %}
+                <li><a href="{{ sub_page.url }}">{{ sub_page.title }}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
