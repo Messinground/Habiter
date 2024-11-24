@@ -1,5 +1,11 @@
 <!-- _includes/navbar.html -->
 
+<!--
+  To dynamically generate navigation buttons based on the file structure in GitHub Pages,
+  we're using Jekyll—a static site generator supported by GitHub Pages.
+  The navigation bar will automatically include links to all HTML files in your main directory and create dropdowns for files within folders.
+-->
+
 <nav>
   <ul>
     {% assign main_pages = site.html_pages | where_exp: "page", "page.path contains '/'" %}
