@@ -1,0 +1,36 @@
+<!-- _layouts/default.html -->
+<!--
+  For the navbar and footer to work properly, you must enable Jekyll on Github pages.
+  Then you must include this at the top:
+---
+layout: default
+title: "Page Title"
+---
+
+<!-- Your page content goes here -->
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ page.title | default: "Your Website" }}</title>
+  <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+</head>
+<body>
+  {% include navbar.html %}
+
+  <div class="container">
+    <div class="section">
+      {{ content }}
+    </div>
+    <div class="section">
+      <!-- Interactive tool container -->
+      <!-- You can embed interactive tools here -->
+    </div>
+  </div>
+
+  {% include footer.html %}
+</body>
+</html>
