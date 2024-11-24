@@ -1,28 +1,10 @@
 <!-- _includes/navbar.html -->
 
-<!--
-  To dynamically generate navigation buttons based on the file structure in GitHub Pages,
-  we're using Jekyll—a static site generator supported by GitHub Pages.
-  The navigation bar will automatically include links to all HTML files in your main directory and create dropdowns for files within folders.
--->
-
 <nav>
   <ul>
-    {% assign main_pages = site.html_pages | where_exp: "page", "page.path contains '/'" %}
-    {% for page in main_pages %}
-      {% assign folder = page.path | split: '/' | first %}
-      {% if folder == '' or folder == page.url %}
-        <li>
-          <a href="{{ page.url }}">{{ page.title | default: 'Home' }}</a>
-          {% assign sub_pages = site.html_pages | where_exp: "p", "p.path startswith page.path | remove: page.name" %}
-          {% if sub_pages.size > 0 %}
-            <ul>
-              {% for sub_page in sub_pages %}
-                <li><a href="{{ sub_page.url }}">{{ sub_page.title }}</a></li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
+    {% for page in site.pages %}
+      {% if page.title and page.nav_exclude != true %}
+        <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>

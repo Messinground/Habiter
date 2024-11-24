@@ -25,10 +25,13 @@ title: "Page Title"
     <div class="section">
       {{ content }}
     </div>
+
+    {% if page.interactive_tool_content %}
     <div class="section">
       <!-- Interactive tool container -->
-      <!-- You can embed interactive tools here -->
+      {{ page.interactive_tool_content }}
     </div>
+    {% endif %}
   </div>
 
   {% include footer.html %}

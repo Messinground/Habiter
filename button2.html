@@ -1,0 +1,717 @@
+---
+layout: default
+title: "ToDoList"
+---
+
+<!-- Your page content goes here -->
+
+<div id="todo-app">
+        <!-- Date Navigation -->
+        <div id="date-navigation">
+            <button id="prev-day-button">&larr;</button>
+            <span id="current-date"></span>
+            <button id="next-day-button">&rarr;</button>
+            <button id="reset-date-button">Reset Date</button>
+        </div>
+
+        <!-- Clear Data Button -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button id="clear-data-button">Clear All Data</button>
+        </div>
+
+        <h1>To-Do List</h1>
+        <ul id="task-list"></ul>
+        <hr>
+
+        <!-- Task Input Form -->
+        <div id="task-form">
+            <label for="new-task-text">Task Description</label>
+            <input type="text" id="new-task-text" placeholder="Enter a new task">
+            <label for="recurrence-select">Recurrence</label>
+            <select id="recurrence-select">
+                <option value="none">No Recurrence</option>
+                <option value="daily">Daily</option>
+                <option value="weekdays">Weekdays (Mon-Fri)</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+            </select>
+
+            <!-- Weekly recurrence options -->
+            <div id="weekly-options" class="recurrence-options" style="display: none;">
+                <label for="weekly-day-select">Select Day of the Week</label>
+                <select id="weekly-day-select">
+                    <option value="sunday">Sunday</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                </select>
+            </div>
+
+            <!-- Custom recurrence options -->
+            <div id="custom-options" class="recurrence-options" style="display: none;">
+                <label>Custom Recurrence</label>
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <span>Every</span>
+                    <input type="number" id="custom-interval" min="1" value="1" style="width: 60px; margin: 0 10px;">
+                    <select id="custom-interval-type">
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                        <option value="years">Years</option>
+                    </select>
+                </div>
+                <!-- Weekday checkboxes for weeks -->
+                <div id="custom-weekday-options" style="display: none;">
+                    <label>Select Days of the Week</label>
+                    <div class="weekday-checkboxes">
+                        <label><input type="checkbox" value="sunday"> Sunday</label>
+                        <label><input type="checkbox" value="monday"> Monday</label>
+                        <label><input type="checkbox" value="tuesday"> Tuesday</label>
+                        <label><input type="checkbox" value="wednesday"> Wednesday</label>
+                        <label><input type="checkbox" value="thursday"> Thursday</label>
+                        <label><input type="checkbox" value="friday"> Friday</label>
+                        <label><input type="checkbox" value="saturday"> Saturday</label>
+                    </div>
+                </div>
+            </div>
+
+            <button id="add-task-button">Add Task</button>
+        </div>
+    </div>
+
+    <!-- Edit Form Modal -->
+    <div id="edit-form-modal">
+        <div id="edit-form">
+            <h2>Edit Task</h2>
+            <label for="edit-task-text">Task Description</label>
+            <input type="text" id="edit-task-text" placeholder="Edit your task">
+            <label for="edit-recurrence-select">Recurrence</label>
+            <select id="edit-recurrence-select">
+                <option value="none">No Recurrence</option>
+                <option value="daily">Daily</option>
+                <option value="weekdays">Weekdays (Mon-Fri)</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+            </select>
+
+            <!-- Weekly recurrence options in edit form -->
+            <div id="edit-weekly-options" class="recurrence-options" style="display: none;">
+                <label for="edit-weekly-day-select">Select Day of the Week</label>
+                <select id="edit-weekly-day-select">
+                    <option value="sunday">Sunday</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                </select>
+            </div>
+
+            <!-- Custom recurrence options in edit form -->
+            <div id="edit-custom-options" class="recurrence-options" style="display: none;">
+                <label>Custom Recurrence</label>
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <span>Every</span>
+                    <input type="number" id="edit-custom-interval" min="1" value="1" style="width: 60px; margin: 0 10px;">
+                    <select id="edit-custom-interval-type">
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                        <option value="years">Years</option>
+                    </select>
+                </div>
+                <!-- Weekday checkboxes for weeks -->
+                <div id="edit-custom-weekday-options" style="display: none;">
+                    <label>Select Days of the Week</label>
+                    <div class="weekday-checkboxes">
+                        <label><input type="checkbox" value="sunday"> Sunday</label>
+                        <label><input type="checkbox" value="monday"> Monday</label>
+                        <label><input type="checkbox" value="tuesday"> Tuesday</label>
+                        <label><input type="checkbox" value="wednesday"> Wednesday</label>
+                        <label><input type="checkbox" value="thursday"> Thursday</label>
+                        <label><input type="checkbox" value="friday"> Friday</label>
+                        <label><input type="checkbox" value="saturday"> Saturday</label>
+                    </div>
+                </div>
+            </div>
+
+            <button id="save-task-button">Save</button>
+            <button id="cancel-edit-button" style="background-color: #f44336;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const prevDayButton = document.getElementById('prev-day-button');
+            const nextDayButton = document.getElementById('next-day-button');
+            const resetDateButton = document.getElementById('reset-date-button');
+            const currentDateSpan = document.getElementById('current-date');
+            const clearDataButton = document.getElementById('clear-data-button');
+            const taskList = document.getElementById('task-list');
+            const addTaskButton = document.getElementById('add-task-button');
+
+            // Form elements for adding tasks
+            const newTaskText = document.getElementById('new-task-text');
+            const recurrenceSelect = document.getElementById('recurrence-select');
+            const weeklyOptions = document.getElementById('weekly-options');
+            const weeklyDaySelect = document.getElementById('weekly-day-select');
+
+            const customOptions = document.getElementById('custom-options');
+            const customInterval = document.getElementById('custom-interval');
+            const customIntervalType = document.getElementById('custom-interval-type');
+            const customWeekdayOptions = document.getElementById('custom-weekday-options');
+            const customWeekdayCheckboxes = customWeekdayOptions.querySelectorAll('input[type="checkbox"]');
+
+            // Elements for the edit form modal
+            const editFormModal = document.getElementById('edit-form-modal');
+            const editTaskText = document.getElementById('edit-task-text');
+            const editRecurrenceSelect = document.getElementById('edit-recurrence-select');
+            const editWeeklyOptions = document.getElementById('edit-weekly-options');
+            const editWeeklyDaySelect = document.getElementById('edit-weekly-day-select');
+
+            const editCustomOptions = document.getElementById('edit-custom-options');
+            const editCustomInterval = document.getElementById('edit-custom-interval');
+            const editCustomIntervalType = document.getElementById('edit-custom-interval-type');
+            const editCustomWeekdayOptions = document.getElementById('edit-custom-weekday-options');
+            const editCustomWeekdayCheckboxes = editCustomWeekdayOptions.querySelectorAll('input[type="checkbox"]');
+
+            const saveTaskButton = document.getElementById('save-task-button');
+            const cancelEditButton = document.getElementById('cancel-edit-button');
+            let editTaskIndex = null; // To track which task is being edited
+
+            // Initialize currentDate correctly
+            let storedDate = localStorage.getItem('currentDate');
+            let currentDate = new Date(storedDate);
+            if (!storedDate || isNaN(currentDate.getTime())) {
+                currentDate = new Date();
+            }
+
+            updateCurrentDateDisplay();
+
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            let recurringTasks = JSON.parse(localStorage.getItem('recurringTasks')) || [];
+
+            // Show/hide additional inputs based on recurrence selection
+            recurrenceSelect.addEventListener('change', () => {
+                showHideRecurrenceOptions('add');
+            });
+
+            editRecurrenceSelect.addEventListener('change', () => {
+                showHideRecurrenceOptions('edit');
+            });
+
+            function showHideRecurrenceOptions(formType) {
+                let recurrenceValue = formType === 'add' ? recurrenceSelect.value : editRecurrenceSelect.value;
+                let weeklyOpts = formType === 'add' ? weeklyOptions : editWeeklyOptions;
+                let customOpts = formType === 'add' ? customOptions : editCustomOptions;
+                let customWeekdayOpts = formType === 'add' ? customWeekdayOptions : editCustomWeekdayOptions;
+                let intervalType = formType === 'add' ? customIntervalType : editCustomIntervalType;
+
+                weeklyOpts.style.display = 'none';
+                customOpts.style.display = 'none';
+                customWeekdayOpts.style.display = 'none';
+
+                if (recurrenceValue === 'weekly') {
+                    weeklyOpts.style.display = 'block';
+                } else if (recurrenceValue === 'custom') {
+                    customOpts.style.display = 'block';
+                    if (intervalType.value === 'weeks') {
+                        customWeekdayOpts.style.display = 'block';
+                    }
+                }
+            }
+
+            // Show/hide weekday options based on interval type
+            customIntervalType.addEventListener('change', () => {
+                if (customIntervalType.value === 'weeks') {
+                    customWeekdayOptions.style.display = 'block';
+                } else {
+                    customWeekdayOptions.style.display = 'none';
+                }
+            });
+
+            editCustomIntervalType.addEventListener('change', () => {
+                if (editCustomIntervalType.value === 'weeks') {
+                    editCustomWeekdayOptions.style.display = 'block';
+                } else {
+                    editCustomWeekdayOptions.style.display = 'none';
+                }
+            });
+
+            prevDayButton.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() - 1);
+                localStorage.setItem('currentDate', currentDate.toISOString());
+                updateCurrentDateDisplay();
+                archiveTasks();
+                handleRecurringTasks();
+            });
+
+            nextDayButton.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() + 1);
+                localStorage.setItem('currentDate', currentDate.toISOString());
+                updateCurrentDateDisplay();
+                archiveTasks();
+                handleRecurringTasks();
+            });
+
+            // Reset Date Button Event Listener
+            resetDateButton.addEventListener('click', () => {
+                currentDate = new Date();
+                localStorage.setItem('currentDate', currentDate.toISOString());
+                updateCurrentDateDisplay();
+                archiveTasks();
+                handleRecurringTasks();
+            });
+
+            function updateCurrentDateDisplay() {
+                currentDateSpan.textContent = currentDate.toDateString();
+            }
+
+            clearDataButton.addEventListener('click', () => {
+                localStorage.clear();
+                tasks = [];
+                recurringTasks = [];
+                renderTasks();
+                alert('All data has been cleared.');
+            });
+
+            function renderTasks() {
+                taskList.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const li = document.createElement('li');
+
+                    const taskContent = document.createElement('div');
+                    taskContent.classList.add('task-content');
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = task.completed;
+                    checkbox.addEventListener('change', () => {
+                        tasks[index].completed = checkbox.checked;
+                        saveTasks();
+                        renderTasks();
+                    });
+
+                    const taskText = document.createElement('span');
+                    taskText.textContent = task.text;
+                    if (task.completed) {
+                        li.classList.add('completed');
+                    }
+
+                    taskContent.appendChild(checkbox);
+                    taskContent.appendChild(taskText);
+
+                    if (task.recurrence) {
+                        const recurrenceLabel = document.createElement('span');
+                        recurrenceLabel.classList.add('recurrence-label');
+                        let recurrenceText = ` (${formatRecurrenceText(task)})`;
+                        recurrenceLabel.textContent = recurrenceText;
+                        taskContent.appendChild(recurrenceLabel);
+                    }
+
+                    const taskButtons = document.createElement('div');
+                    taskButtons.classList.add('task-buttons');
+
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = '✏️';
+                    editButton.addEventListener('click', () => {
+                        editTaskIndex = index;
+                        populateEditForm(task);
+                        editFormModal.style.display = 'block';
+                    });
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '🗑️';
+                    deleteButton.addEventListener('click', () => {
+                        // Remove from tasks
+                        tasks.splice(index, 1);
+                        saveTasks();
+                        renderTasks();
+
+                        // Remove from recurringTasks if necessary
+                        if (task.recurrence) {
+                            const recurringTaskIndex = recurringTasks.findIndex(rt => rt.text === task.text);
+                            if (recurringTaskIndex !== -1) {
+                                recurringTasks.splice(recurringTaskIndex, 1);
+                                saveRecurringTasks();
+                            }
+                        }
+                    });
+
+                    taskButtons.appendChild(editButton);
+                    taskButtons.appendChild(deleteButton);
+
+                    li.appendChild(taskContent);
+                    li.appendChild(taskButtons);
+                    taskList.appendChild(li);
+                });
+            }
+
+            addTaskButton.addEventListener('click', () => {
+                const taskTextValue = newTaskText.value.trim();
+                if (taskTextValue) {
+                    let task = { text: taskTextValue, completed: false };
+                    const recurrenceValue = recurrenceSelect.value;
+
+                    if (recurrenceValue !== 'none') {
+                        task.recurrence = getRecurrenceData('add');
+                        if (!task.recurrence) {
+                            return; // Invalid recurrence data
+                        }
+                        // Add to recurringTasks list
+                        recurringTasks.push({ ...task });
+                        saveRecurringTasks();
+                    }
+
+                    tasks.push(task);
+                    saveTasks();
+                    renderTasks();
+
+                    // Clear form inputs
+                    newTaskText.value = '';
+                    recurrenceSelect.value = 'none';
+                    showHideRecurrenceOptions('add');
+                    // Clear recurrence options
+                    weeklyDaySelect.selectedIndex = 0;
+                    customInterval.value = 1;
+                    customIntervalType.selectedIndex = 0;
+                    customWeekdayCheckboxes.forEach(cb => cb.checked = false);
+                } else {
+                    alert('Please enter a task description.');
+                }
+            });
+
+            // Save button in edit form
+            saveTaskButton.addEventListener('click', () => {
+                if (editTaskIndex !== null) {
+                    const task = tasks[editTaskIndex];
+                    const originalText = task.text;
+                    const taskTextValue = editTaskText.value.trim();
+                    if (taskTextValue) {
+                        task.text = taskTextValue;
+                    } else {
+                        alert('Please enter a task description.');
+                        return;
+                    }
+
+                    const recurrenceValue = editRecurrenceSelect.value;
+
+                    if (recurrenceValue !== 'none') {
+                        task.recurrence = getRecurrenceData('edit');
+                        if (!task.recurrence) {
+                            return; // Invalid recurrence data
+                        }
+                        // Update recurringTasks list
+                        const recurringTaskIndex = recurringTasks.findIndex(rt => rt.text === originalText);
+                        if (recurringTaskIndex !== -1) {
+                            recurringTasks[recurringTaskIndex] = { ...task };
+                        } else {
+                            recurringTasks.push({ ...task });
+                        }
+                        saveRecurringTasks();
+                    } else {
+                        // Remove from recurringTasks if it was previously recurring
+                        const recurringTaskIndex = recurringTasks.findIndex(rt => rt.text === originalText);
+                        if (recurringTaskIndex !== -1) {
+                            recurringTasks.splice(recurringTaskIndex, 1);
+                            saveRecurringTasks();
+                        }
+                        delete task.recurrence;
+                    }
+
+                    saveTasks();
+                    renderTasks();
+
+                    // Hide the edit form modal
+                    editFormModal.style.display = 'none';
+                    editTaskIndex = null;
+                }
+            });
+
+            // Cancel button in edit form
+            cancelEditButton.addEventListener('click', () => {
+                editFormModal.style.display = 'none';
+                editTaskIndex = null;
+            });
+
+            // Close the modal if the user clicks outside the form
+            window.addEventListener('click', (event) => {
+                if (event.target == editFormModal) {
+                    editFormModal.style.display = 'none';
+                    editTaskIndex = null;
+                }
+            });
+
+            function saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
+
+            function saveRecurringTasks() {
+                localStorage.setItem('recurringTasks', JSON.stringify(recurringTasks));
+            }
+
+            function archiveTasks() {
+                const formattedDate = currentDate.toDateString();
+                if (localStorage.getItem('lastArchiveDate') !== formattedDate) {
+                    let archivedTasks = JSON.parse(localStorage.getItem('archivedTasks')) || [];
+                    // Archive all completed tasks
+                    const completedTasks = tasks.filter(task => task.completed);
+                    archivedTasks = archivedTasks.concat(completedTasks);
+                    localStorage.setItem('archivedTasks', JSON.stringify(archivedTasks));
+
+                    // Update lastOccurrence for completed recurring tasks
+                    completedTasks.forEach(task => {
+                        if (task.recurrence && task.recurrence.type === 'custom') {
+                            const recurringTask = recurringTasks.find(rt => rt.text === task.text);
+                            if (recurringTask) {
+                                recurringTask.recurrence.lastOccurrence = currentDate.toISOString();
+                            }
+                        }
+                    });
+                    saveRecurringTasks();
+
+                    // Remove all completed tasks from the tasks array
+                    tasks = tasks.filter(task => !task.completed);
+                    saveTasks();
+                    renderTasks();
+
+                    localStorage.setItem('lastArchiveDate', formattedDate);
+                }
+            }
+
+            function handleRecurringTasks() {
+                // For each recurring task, check if it should occur today
+                recurringTasks.forEach(recurringTask => {
+                    const occurrence = checkNextOccurrence(recurringTask.recurrence, recurringTask);
+                    const existingTaskIndex = tasks.findIndex(task => task.text === recurringTask.text);
+                    if (occurrence) {
+                        // The task is scheduled to occur today
+                        if (existingTaskIndex === -1) {
+                            // Task is not in tasks list, add it
+                            tasks.push({ ...recurringTask, completed: false });
+                        } else {
+                            // Task is already in tasks list
+                            // Reset completed status if necessary
+                            if (tasks[existingTaskIndex].completed) {
+                                tasks[existingTaskIndex].completed = false;
+                            }
+                        }
+                    } else {
+                        // Do not remove tasks; uncompleted tasks remain until replaced by next recurrence
+                    }
+                });
+                saveTasks();
+                renderTasks();
+            }
+
+            function checkNextOccurrence(recurrence, task) {
+                let now = currentDate;
+                let nextOccurrence = false;
+
+                switch (recurrence.type) {
+                    case 'daily':
+                        nextOccurrence = true;
+                        break;
+                    case 'weekdays':
+                        const day = now.getDay();
+                        if (day >= 1 && day <= 5) {
+                            nextOccurrence = true;
+                        }
+                        break;
+                    case 'weekly':
+                        const currentDay = now.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+                        if (currentDay === recurrence.day) {
+                            nextOccurrence = true;
+                        }
+                        break;
+                    case 'monthly':
+                        if (now.getDate() === recurrence.date) {
+                            nextOccurrence = true;
+                        }
+                        break;
+                    case 'yearly':
+                        if (now.getMonth() + 1 === recurrence.month && now.getDate() === recurrence.date) {
+                            nextOccurrence = true;
+                        }
+                        break;
+                    case 'custom':
+                        const lastDate = new Date(recurrence.lastOccurrence || recurrence.startDate);
+                        let difference;
+
+                        switch (recurrence.intervalType) {
+                            case 'days':
+                                difference = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+                                if (difference >= recurrence.interval) {
+                                    nextOccurrence = true;
+                                    // Do not update lastOccurrence here
+                                }
+                                break;
+                            case 'weeks':
+                                difference = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24 * 7));
+                                if (difference >= recurrence.interval) {
+                                    const currentWeekday = now.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+                                    if (recurrence.days.includes(currentWeekday)) {
+                                        nextOccurrence = true;
+                                        // Do not update lastOccurrence here
+                                    }
+                                }
+                                break;
+                            case 'months':
+                                const monthsDifference = (now.getFullYear() - lastDate.getFullYear()) * 12 + (now.getMonth() - lastDate.getMonth());
+                                if (monthsDifference >= recurrence.interval && now.getDate() === recurrence.date) {
+                                    nextOccurrence = true;
+                                    // Do not update lastOccurrence here
+                                }
+                                break;
+                            case 'years':
+                                const yearsDifference = now.getFullYear() - lastDate.getFullYear();
+                                if (yearsDifference >= recurrence.interval && now.getMonth() === lastDate.getMonth() && now.getDate() === lastDate.getDate()) {
+                                    nextOccurrence = true;
+                                    // Do not update lastOccurrence here
+                                }
+                                break;
+                        }
+                        break;
+                }
+
+                return nextOccurrence;
+            }
+
+            function getRecurrenceData(formType) {
+                let recurrenceValue = formType === 'add' ? recurrenceSelect.value : editRecurrenceSelect.value;
+                let recurrence = { type: recurrenceValue };
+                let interval, intervalType, weekdayCheckboxes;
+
+                if (formType === 'add') {
+                    interval = customInterval;
+                    intervalType = customIntervalType;
+                    weekdayCheckboxes = customWeekdayCheckboxes;
+                } else {
+                    interval = editCustomInterval;
+                    intervalType = editCustomIntervalType;
+                    weekdayCheckboxes = editCustomWeekdayCheckboxes;
+                }
+
+                switch (recurrenceValue) {
+                    case 'weekly':
+                        const daySelect = formType === 'add' ? weeklyDaySelect : editWeeklyDaySelect;
+                        recurrence.day = daySelect.value;
+                        break;
+                    case 'monthly':
+                        recurrence.date = currentDate.getDate();
+                        break;
+                    case 'yearly':
+                        recurrence.date = currentDate.getDate();
+                        recurrence.month = currentDate.getMonth() + 1;
+                        break;
+                    case 'custom':
+                        const intervalValue = parseInt(interval.value);
+                        if (isNaN(intervalValue) || intervalValue <= 0) {
+                            alert('Please enter a valid interval number.');
+                            return null;
+                        }
+                        recurrence.interval = intervalValue;
+                        recurrence.intervalType = intervalType.value;
+                        recurrence.startDate = currentDate.toISOString();
+
+                        if (recurrence.intervalType === 'weeks') {
+                            const selectedDays = Array.from(weekdayCheckboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value);
+                            if (selectedDays.length === 0) {
+                                alert('Please select at least one day of the week.');
+                                return null;
+                            }
+                            recurrence.days = selectedDays;
+                        } else if (recurrence.intervalType === 'months') {
+                            recurrence.date = currentDate.getDate();
+                        }
+                        break;
+                }
+
+                return recurrence;
+            }
+
+            function formatRecurrenceText(task) {
+                let recurrence = task.recurrence;
+                let text = '';
+                switch (recurrence.type) {
+                    case 'daily':
+                        text = 'Daily';
+                        break;
+                    case 'weekdays':
+                        text = 'Weekdays (Mon-Fri)';
+                        break;
+                    case 'weekly':
+                        text = `Every week on ${capitalizeFirstLetter(recurrence.day)}`;
+                        break;
+                    case 'monthly':
+                        text = `Monthly on day ${recurrence.date}`;
+                        break;
+                    case 'yearly':
+                        text = `Yearly on ${recurrence.month}/${recurrence.date}`;
+                        break;
+                    case 'custom':
+                        text = `Every ${recurrence.interval} ${capitalizeFirstLetter(recurrence.intervalType)}`;
+                        if (recurrence.intervalType === 'weeks') {
+                            text += ` on ${recurrence.days.map(d => capitalizeFirstLetter(d)).join(', ')}`;
+                        }
+                        break;
+                }
+                return text;
+            }
+
+            function capitalizeFirstLetter(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            function populateEditForm(task) {
+                editTaskText.value = task.text;
+                editRecurrenceSelect.value = task.recurrence ? task.recurrence.type : 'none';
+                showHideRecurrenceOptions('edit');
+
+                // Reset recurrence options
+                editWeeklyDaySelect.selectedIndex = 0;
+                editCustomInterval.value = 1;
+                editCustomIntervalType.selectedIndex = 0;
+                editCustomWeekdayCheckboxes.forEach(cb => cb.checked = false);
+
+                if (task.recurrence) {
+                    switch (task.recurrence.type) {
+                        case 'weekly':
+                            editWeeklyDaySelect.value = task.recurrence.day;
+                            break;
+                        case 'custom':
+                            editCustomInterval.value = task.recurrence.interval;
+                            editCustomIntervalType.value = task.recurrence.intervalType;
+                            if (task.recurrence.intervalType === 'weeks') {
+                                editCustomWeekdayOptions.style.display = 'block';
+                                task.recurrence.days.forEach(day => {
+                                    const cb = Array.from(editCustomWeekdayCheckboxes).find(cb => cb.value === day);
+                                    if (cb) cb.checked = true;
+                                });
+                            } else {
+                                editCustomWeekdayOptions.style.display = 'none';
+                            }
+                            break;
+                        // Additional cases can be added as needed
+                    }
+                }
+            }
+
+            // Initial function calls
+            archiveTasks();
+            handleRecurringTasks();
+            renderTasks();
+        });
+    </script>
+
