@@ -4,8 +4,8 @@ title: Habiter
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   The hub for Habit-Building Adventure
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol, e.g. http://example.com
+baseurl: "/Habiter" # the subpath of your site, e.g. /blog
+url: "https://Messinground.github.io" # the base hostname & protocol, e.g. http://example.com
 
 # Exclude these files from processing
 exclude:
