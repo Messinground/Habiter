@@ -1,15 +1,4 @@
 <!-- _layouts/default.html -->
-<!--
-  For the navbar and footer to work properly, you must enable Jekyll on Github pages.
-  Then you must include this at the top:
----
-layout: default
-title: "Page Title"
----
-
-<!-- Your page content goes here -->
-
--->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +6,14 @@ title: "Page Title"
   <meta charset="UTF-8">
   <title>{{ page.title | default: "Your Website" }}</title>
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+  
+  <!-- Firebase SDKs -->
+  <!-- Include Firebase in the head section -->
+  <!-- Step 1: Include Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <!-- Include other Firebase products as needed -->
 </head>
 <body>
   {% include navbar.html %}
@@ -35,5 +32,8 @@ title: "Page Title"
   </div>
 
   {% include footer.html %}
+
+  <!-- Initialize Firebase -->
+  <script src="{{ '/firebase-init.js' | relative_url }}"></script>
 </body>
 </html>

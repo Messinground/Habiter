@@ -25,3 +25,4 @@ Every page needs this text at the very top in order to automatically appear on t
 	<!-- Your page's main content goes here -->
 
 Change "false" to "true" if you want it to appear on the navbar.
+You may also refer to PageTemplate.html to see how a page should be formatted.
