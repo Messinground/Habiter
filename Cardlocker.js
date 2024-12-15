@@ -14,9 +14,39 @@ const cardData = {
   },
   attackRange: { min: 3, max: 12 },
   abilities: [
-    { description: "2⚡ Combust: Deal 5 damage.", weight: 1, pointValue: 2 }, // the ⚡ indicates that it costs 2 energy to use.
-    { description: "Your champion takes -1 damage from attacks. Lasts as long as this card is active, or until the start of your next turn.", weight: 1, pointValue: 1 }, // If on a consumable, works until the start of the next turn. Otherwise, works as long as the card is active. This is important to clarify for abilities that aren't neccesarily one-time effects because it may appear on multiple types of cards. It's also important to clarify that the champion is the one taking reduced damage because this may appear on or with a pet.
-    { description: "1⚡ Heal 5 HP.", weight: 1, pointValue: 2 }, // Costs 1 energy to use
+    // Activated abilities (always show cost and describe immediate effect)
+    { description: "2⚡ Combust: Deal 5 damage.", weight: 1, pointValue: 2 },
+    { description: "1⚡ Heal 5 HP.", weight: 1, pointValue: 2 },
+    { description: "0⚡ Quick Attack: Deal 2 damage.", weight: 1, pointValue: 1 },
+    { description: "2⚡ Shield Bash: Deal 3 damage and gain a 5 HP Shield until end of this turn.", weight: 1, pointValue: 3 },
+    { description: "1⚡ Draw a card.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Stun: Paralyze target (50% chance they cannot attack next turn).", weight: 1, pointValue: 3 },
+    { description: "3⚡ Summon Pet: Create a 3/3 Pet token with no abilities.", weight: 1, pointValue: 4 },
+    { description: "2⚡ Siphon Energy: Steal 1 energy from opponent this turn.", weight: 1, pointValue: 3 },
+    { description: "3⚡ Mass Heal: Heal your champion and all pets by 5 HP.", weight: 1, pointValue: 4 },
+    { description: "1⚡ Bleed: Target takes 15 damage at the end of their next 3 turns.", weight: 1, pointValue: 3 },
+    { description: "2⚡ Poison: Target takes 20 damage at the start of their next 2 turns.", weight: 1, pointValue: 3 },
+    { description: "2⚡ Dispel: Remove all conditions from a target immediately.", weight: 1, pointValue: 2 },
+    { description: "1⚡ Fortify: Gain +2 HP immediately.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Energize: Gain +1 energy this turn only.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Disable: Target equipment cannot be used on their next turn.", weight: 1, pointValue: 3 },
+    { description: "3⚡ Revive: Return a Pet from your discard pile to your hand.", weight: 1, pointValue: 4 },
+    { description: "1⚡ Swift Move: Your next card played this turn costs 1 less energy.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Fireball: Deal 7 damage immediately.", weight: 1, pointValue: 3 },
+    { description: "3⚡ Mind Control: Control opponent's Pet until the end of this turn.", weight: 1, pointValue: 4 },
+    { description: "1⚡ Recycle: Return a consumable from your discard pile to your hand.", weight: 1, pointValue: 2 },
+    { description: "1⚡ Sacrifice: Deal 3 damage to yourself and draw two cards immediately.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Stealth: Your champion can't be targeted until your next turn starts.", weight: 1, pointValue: 3 },
+    { description: "2⚡ Freeze: Target cannot attack on their next turn.", weight: 1, pointValue: 3 },
+    { description: "3⚡ Meteor Strike: Deal 10 damage to all opponents immediately.", weight: 1, pointValue: 5 },
+    { description: "1⚡ Enrage: Your champion gains +3 attack this turn only.", weight: 1, pointValue: 2 },
+    { description: "2⚡ Trap: Next time opponent attacks this turn, they take 5 damage.", weight: 1, pointValue: 3 },
+
+    // Passive abilities (do not require energy, always "Passive:")
+    // Note: We'll have code to adjust if on a Consumable card
+    { description: "Passive: Your champion takes 1 less damage from attacks while this card is active.", weight: 1, pointValue: 1 },
+    { description: "Passive: Your champion gains +2 attack while this card is active.", weight: 1, pointValue: 3 },
+    { description: "Passive: Your pet gains +2 HP while this card is active.", weight: 1, pointValue: 2 },
   ],
   types: [
     { value: "Armor", weight: 3, exclude: ["attack"], extraPoints: 2 },
@@ -45,6 +75,7 @@ const cardData = {
     ],
   },
 };
+
 
 
 // Point values are assigned to each stat based on how strong it is. Values range from 1-3 for each stat.
@@ -287,6 +318,13 @@ const generateAttack = () => {
       totalPoints += energy.pointValue;
 
     } while (totalPoints < 7 || totalPoints > 10); // Ensure balanced points
+
+    if (type === "Consumable" && attributes.ability.startsWith("Passive:")) {
+      // Convert passive language to something turn-limited
+      attributes.ability = attributes.ability
+        .replace("Passive:", "This turn only:")
+        .replace("while this card is active", "");
+    }
 
     // Populate card elements
     elements.type.textContent = type;
