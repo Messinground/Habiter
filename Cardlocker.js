@@ -8,53 +8,53 @@
 const cardData = {
   hpRange: { min: 25, max: 40 },
   costRange: { min: 0, max: 4 },
+  abilityCostRange: { min: 0, max: 4 }, // Similar distribution to cost
   energyRange: {
     champion: { min: 2, max: 4 },
     others: { min: 0, max: 5 },
   },
   attackRange: { min: 3, max: 12 },
-  abilities: [
-    // Activated abilities (always show cost and describe immediate effect)
-    { description: "2⚡ Combust: Deal 5 damage.", weight: 1, pointValue: 2 },
-    { description: "1⚡ Heal 5 HP.", weight: 1, pointValue: 2 },
-    { description: "0⚡ Quick Attack: Deal 2 damage.", weight: 1, pointValue: 1 },
-    { description: "2⚡ Shield Bash: Deal 3 damage and gain a 5 HP Shield until end of this turn.", weight: 1, pointValue: 3 },
-    { description: "1⚡ Draw a card.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Stun: Paralyze target (50% chance they cannot attack next turn).", weight: 1, pointValue: 3 },
-    { description: "3⚡ Summon Pet: Create a 3/3 Pet token with no abilities.", weight: 1, pointValue: 4 },
-    { description: "2⚡ Siphon Energy: Steal 1 energy from opponent this turn.", weight: 1, pointValue: 3 },
-    { description: "3⚡ Mass Heal: Heal your champion and all pets by 5 HP.", weight: 1, pointValue: 4 },
-    { description: "1⚡ Bleed: Target takes 15 damage at the end of their next 3 turns.", weight: 1, pointValue: 3 },
-    { description: "2⚡ Poison: Target takes 20 damage at the start of their next 2 turns.", weight: 1, pointValue: 3 },
-    { description: "2⚡ Dispel: Remove all conditions from a target immediately.", weight: 1, pointValue: 2 },
-    { description: "1⚡ Fortify: Gain +2 HP immediately.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Energize: Gain +1 energy this turn only.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Disable: Target equipment cannot be used on their next turn.", weight: 1, pointValue: 3 },
-    { description: "3⚡ Revive: Return a Pet from your discard pile to your hand.", weight: 1, pointValue: 4 },
-    { description: "1⚡ Swift Move: Your next card played this turn costs 1 less energy.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Fireball: Deal 7 damage immediately.", weight: 1, pointValue: 3 },
-    { description: "3⚡ Mind Control: Control opponent's Pet until the end of this turn.", weight: 1, pointValue: 4 },
-    { description: "1⚡ Recycle: Return a consumable from your discard pile to your hand.", weight: 1, pointValue: 2 },
-    { description: "1⚡ Sacrifice: Deal 3 damage to yourself and draw two cards immediately.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Stealth: Your champion can't be targeted until your next turn starts.", weight: 1, pointValue: 3 },
-    { description: "2⚡ Freeze: Target cannot attack on their next turn.", weight: 1, pointValue: 3 },
-    { description: "3⚡ Meteor Strike: Deal 10 damage to all opponents immediately.", weight: 1, pointValue: 5 },
-    { description: "1⚡ Enrage: Your champion gains +3 attack this turn only.", weight: 1, pointValue: 2 },
-    { description: "2⚡ Trap: Next time opponent attacks this turn, they take 5 damage.", weight: 1, pointValue: 3 },
 
-    // Passive abilities (do not require energy, always "Passive:")
-    // Note: We'll have code to adjust if on a Consumable card
-    { description: "Passive: Your champion takes 1 less damage from attacks while this card is active.", weight: 1, pointValue: 1 },
-    { description: "Passive: Your champion gains +2 attack while this card is active.", weight: 1, pointValue: 3 },
-    { description: "Passive: Your pet gains +2 HP while this card is active.", weight: 1, pointValue: 2 },
+  abilities: [
+    // Active abilities (isPassive: false)
+    { description: "Deal 5 damage.", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Heal 5 HP.", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Draw a card.", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Paralyze target (50% chance cannot attack next turn).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Steal 1 energy from opponent this turn.", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Heal your champion and all pets by 5 HP.", isPassive: false, weight: 1, pointValue: 4 },
+    { description: "Target takes 15 damage at the end of their next 3 turns (Bleed).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Target takes 20 damage at the start of their next 2 turns (Poison).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Remove all conditions from a target (Dispel).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Gain +2 HP immediately (Fortify).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Gain +1 energy this turn only (Energize).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Target equipment cannot be used next turn (Disable).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Return a Pet from your discard pile to your hand (Revive).", isPassive: false, weight: 1, pointValue: 4 },
+    { description: "Your next card played this turn costs 1 less energy (Swift Move).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Deal 7 damage immediately (Fireball).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Control opponent's Pet until end of this turn (Mind Control).", isPassive: false, weight: 1, pointValue: 4 },
+    { description: "Return a consumable from your discard pile to your hand (Recycle).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Deal 3 damage to yourself and draw two cards (Sacrifice).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Your champion can't be targeted until your next turn starts (Stealth).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Target cannot attack on their next turn (Freeze).", isPassive: false, weight: 1, pointValue: 3 },
+    { description: "Deal 10 damage to all opponents (Meteor Strike).", isPassive: false, weight: 1, pointValue: 5 },
+    { description: "Your champion gains +3 attack this turn only (Enrage).", isPassive: false, weight: 1, pointValue: 2 },
+    { description: "Next time opponent attacks this turn, they take 5 damage (Trap).", isPassive: false, weight: 1, pointValue: 3 },
+
+    // Passive abilities (isPassive: true)
+    { description: "Your champion takes 1 less damage from attacks while active.", isPassive: true, weight: 1, pointValue: 1 },
+    { description: "Your champion gains +2 attack while active.", isPassive: true, weight: 1, pointValue: 3 },
+    { description: "Your pet gains +2 HP while active.", isPassive: true, weight: 1, pointValue: 2 },
   ],
+
   types: [
-    { value: "Armor", weight: 3, exclude: ["attack"], extraPoints: 2 },
+    { value: "Armor", weight: 3, exclude: ["attack", "AbilityCost"], extraPoints: 2 },
     { value: "Weapon", weight: 2, exclude: ["hp"], extraPoints: 2 },
-    { value: "Consumable", weight: 3, exclude: ["hp", "attack"], extraPoints: 4 },
+    { value: "Consumable", weight: 3, exclude: ["hp", "attack", "AbilityCost"], extraPoints: 4 },
     { value: "Pet", weight: 2, exclude: [], extraPoints: 0 },
     { value: "Champion", weight: 1, exclude: ["cost"], extraPoints: -3 },
   ],
+
   naming: {
     roots: [
       "Flame", "Shadow", "Iron", "Storm", "Frost", "Earth", "Light", "Thunder",
@@ -76,20 +76,11 @@ const cardData = {
   },
 };
 
-
-
-// Point values are assigned to each stat based on how strong it is. Values range from 1-3 for each stat.
-// Thus each card adds points for attack, HP, energy, and abilities; then subtracts points based on cost. Combinations range from 0-9
-// To keep the game balanced, it checks to make sure point totals end up between 7-10. If it does not, it rerolls the card.
-// Not all types of cards use every stat, so each type has a parameter to specify what stats are excluded
-// If a stat is excluded, the type also has a parameter to specify how much should be added to the Total point calculation to compensate
-
 // ======================================
-// End of Trading Card Data Configuration
+// Helper Functions and Event Listeners
 // ======================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  // DOM Element References
   const cardContainer = document.getElementById("card-container");
   const generateButton = document.getElementById("generate-button");
   const generatePackButton = document.getElementById("generate-pack-button");
@@ -102,6 +93,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmNameButton = document.getElementById("confirm-name-button");
 
   let selectedCard = null; // Reference to the card being renamed
+
+  // Range adjustments:
+  // Previously 7-10 for max ~14. Now max ~19 originally considered, but we adjusted range to 8-12.
+  // We'll finalize 8 to 12 as the acceptable point range.
+
+  const MIN_POINTS = 8;
+  const MAX_POINTS = 12;
 
   // Helper function to get N unique random elements from an array
   const getRandomElements = (arr, n) => {
@@ -124,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return list[list.length - 1]; // Fallback
   };
 
-  // Function to generate a number with a peak probability at the middle
   const generateMiddlePeakNumber = (min, max) => {
     const mid = (min + max) / 2;
     const maxDistance = Math.floor((max - min) / 2);
@@ -136,64 +133,29 @@ document.addEventListener("DOMContentLoaded", () => {
     return pickRandomWeighted(range).value;
   };
 
-  // Function to generate a number with decreasing probability towards higher values
-  const generateDecreasingProbabilityNumber = (min, max) => {
-    const range = Array.from({ length: max - min + 1 }, (_, i) => ({
-      value: min + i,
-      weight: max - (min + i) + 1,
-    }));
-    return pickRandomWeighted(range).value;
-  };
+  // We can reuse generateMiddlePeakNumber for AbilityCost too, since we want a similar distribution.
 
-// =================================================
-// Calculating the power of randomly chosen stats
-// =================================================
-
-	
-// Function to generate HP
-const generateHP = () => {
-  const { min, max } = cardData.hpRange;
-  const hp = generateMiddlePeakNumber(min, max);
-  
-  // Calculate dynamic thresholds
-  const range = max - min;
-  const firstThreshold = min + range * 0.2; 
-  const secondThreshold = min + range * 0.6; 
-  
-  // Determine pointValue based on dynamic thresholds
-  let pointValue;
-  if (hp <= firstThreshold) {
-    pointValue = 1;
-  } else if (hp <= secondThreshold) {
-    pointValue = 2;
-  } else {
-    pointValue = 3;
-  }
-  
-  return { hp, pointValue };
-};
-
-
-  // Function to generate Cost
   const generateCost = () => {
     const { min, max } = cardData.costRange;
     const cost = generateMiddlePeakNumber(min, max);
-    const pointValue = max - cost * 2; // Cost of 0: +4 points, Cost of 4: -4 points
-    return { cost, pointValue };
+    // Cost point system:
+    // 0 cost = +4 points
+    // 1 cost = +2 points
+    // 2 cost = 0 points
+    // 3 cost = -2 points
+    // 4 cost = -4 points
+    const costPointMap = { 0: 4, 1: 2, 2: 0, 3: -2, 4: -4 };
+    return { cost, pointValue: costPointMap[cost] };
   };
 
-  // Function to generate Energy
-  const generateEnergy = (isChampion) => {
-    const { min, max } = isChampion
-      ? cardData.energyRange.champion
-      : cardData.energyRange.others;
-
-    const energy = Math.floor(generateBiasedRandom(min, max));
-    const pointValue = energy;
-    return { energy, pointValue };
+  const generateAbilityCost = () => {
+    const { min, max } = cardData.abilityCostRange;
+    const abilityCost = generateMiddlePeakNumber(min, max);
+    const costPointMap = { 0: 4, 1: 2, 2: 0, 3: -2, 4: -4 };
+    return { abilityCost, pointValue: costPointMap[abilityCost] };
   };
 
-  // Generates a biased random number between a and b using exponential decay
+  // Generates a biased random number between a and b using exponential decay (for energy)
   const generateBiasedRandom = (a, b) => {
     const c = a + 0.2 * (b - a);
     const targetProbability = 0.7;
@@ -202,36 +164,59 @@ const generateHP = () => {
     return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
   };
 
-// Function to generate Attack
-const generateAttack = () => {
-  const { min, max } = cardData.attackRange;
-  const attack = generateMiddlePeakNumber(min, max);
-  
-  // Calculate dynamic thresholds
-  const range = max - min;
-  const firstThreshold = min + range * 0.2;
-  const secondThreshold = min + range * 0.6; 
-  
-  // Determine pointValue based on dynamic thresholds
-  let pointValue;
-  if (attack <= firstThreshold) {
-    pointValue = 1;
-  } else if (attack <= secondThreshold) {
-    pointValue = 2;
-  } else {
-    pointValue = 3;
-  }
-  
-  return { attack, pointValue };
-};
+  const generateHP = () => {
+    const { min, max } = cardData.hpRange;
+    const hp = generateMiddlePeakNumber(min, max);
+    const range = max - min;
+    const firstThreshold = min + range * 0.2;
+    const secondThreshold = min + range * 0.6;
 
-  // Function to generate Ability
-  const generateAbility = () => {
-    const ability = pickRandomWeighted(cardData.abilities);
-    return { description: ability.description, pointValue: ability.pointValue };
+    let pointValue;
+    if (hp <= firstThreshold) {
+      pointValue = 1;
+    } else if (hp <= secondThreshold) {
+      pointValue = 2;
+    } else {
+      pointValue = 3;
+    }
+
+    return { hp, pointValue };
   };
 
-  // Function to create a new card DOM element
+  const generateEnergy = (isChampion) => {
+    const { min, max } = isChampion
+      ? cardData.energyRange.champion
+      : cardData.energyRange.others;
+
+    const energy = Math.floor(generateBiasedRandom(min, max));
+    const pointValue = energy; 
+    return { energy, pointValue };
+  };
+
+  const generateAttack = () => {
+    const { min, max } = cardData.attackRange;
+    const attack = generateMiddlePeakNumber(min, max);
+    const range = max - min;
+    const firstThreshold = min + range * 0.2;
+    const secondThreshold = min + range * 0.6;
+
+    let pointValue;
+    if (attack <= firstThreshold) {
+      pointValue = 1;
+    } else if (attack <= secondThreshold) {
+      pointValue = 2;
+    } else {
+      pointValue = 3;
+    }
+
+    return { attack, pointValue };
+  };
+
+  const generateAbility = () => {
+    const ability = pickRandomWeighted(cardData.abilities);
+    return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
+  };
+
   const createCardElement = () => {
     const card = document.createElement("article");
     card.classList.add("card");
@@ -253,140 +238,12 @@ const generateAttack = () => {
     return card;
   };
 
-  // Function to generate a single card
   const generateCard = () => {
     const card = createCardElement();
-
-    // Extract card elements for easy access
-    const elements = {
-      type: card.querySelector(".card-type"),
-      cost: card.querySelector(".card-cost"),
-      hp: card.querySelector(".card-hp"),
-      attack: card.querySelector(".card-attack"),
-      abilities: card.querySelector(".card-abilities"),
-      energy: card.querySelector(".card-energy"),
-      name: card.querySelector(".card-name"),
-    };
-
-    // Randomly select a type based on weights
-    const typeItem = pickRandomWeighted(cardData.types);
-    const { value: type, exclude, extraPoints } = typeItem;
-    const isChampion = type === "Champion";
-
-    let totalPoints;
-
-    let attributes = {};
-
-    do {
-      totalPoints = extraPoints;
-
-      // Generate Ability
-      const ability = generateAbility();
-      attributes.ability = ability.description;
-      totalPoints += ability.pointValue;
-
-      // Generate Cost
-      if (!exclude.includes("cost")) {
-        const cost = generateCost();
-        attributes.cost = cost.cost;
-        totalPoints += cost.pointValue;
-      } else {
-        attributes.cost = null;
-      }
-
-      // Generate HP
-      if (!exclude.includes("hp")) {
-        const hp = generateHP();
-        attributes.hp = hp.hp;
-        totalPoints += hp.pointValue;
-      } else {
-        attributes.hp = null;
-      }
-
-      // Generate Attack
-      if (!exclude.includes("attack")) {
-        const attack = generateAttack();
-        attributes.attack = attack.attack;
-        totalPoints += attack.pointValue;
-      } else {
-        attributes.attack = null;
-      }
-
-      // Generate Energy
-      const energy = generateEnergy(isChampion);
-      attributes.energy = energy.energy;
-      totalPoints += energy.pointValue;
-
-    } while (totalPoints < 7 || totalPoints > 10); // Ensure balanced points
-
-    if (type === "Consumable" && attributes.ability.startsWith("Passive:")) {
-      // Convert passive language to something turn-limited
-      attributes.ability = attributes.ability
-        .replace("Passive:", "This turn only:")
-        .replace("while this card is active", "");
-    }
-
-    // Populate card elements
-    elements.type.textContent = type;
-    elements.abilities.textContent = attributes.ability;
-
-    if (attributes.cost !== null) {
-      elements.cost.textContent = `Cost: ${attributes.cost}`;
-      elements.cost.style.display = "";
-    } else {
-      elements.cost.style.display = "none";
-    }
-
-    if (attributes.hp !== null) {
-      elements.hp.textContent = `HP: ${attributes.hp}`;
-      elements.hp.style.display = "";
-    } else {
-      elements.hp.style.display = "none";
-    }
-
-    if (attributes.attack !== null) {
-      elements.attack.textContent = `Attack: ${attributes.attack}`;
-      elements.attack.style.display = "";
-    } else {
-      elements.attack.style.display = "none";
-    }
-
-    if (attributes.energy !== 0) {
-      elements.energy.textContent = `Energy: ${attributes.energy}`;
-      elements.energy.style.display = "";
-    } else {
-      elements.energy.textContent = "";
-      elements.energy.style.display = "none";
-    }
-
-    // Generate naming options
-    const [prefixOptions, rootOptions, suffixOptions] = [
-      getRandomElements(cardData.naming.prefixes, 3),
-      getRandomElements(cardData.naming.roots, 3),
-      getRandomElements(cardData.naming.suffixes, 3),
-    ];
-
-    // Store naming options in dataset for later use
-    card.dataset.prefixOptions = JSON.stringify(prefixOptions);
-    card.dataset.rootOptions = JSON.stringify(rootOptions);
-    card.dataset.suffixOptions = JSON.stringify(suffixOptions);
-
-    // Set default name
-    const defaultName = [
-      prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
-      rootOptions[Math.floor(Math.random() * rootOptions.length)],
-      suffixOptions[Math.floor(Math.random() * suffixOptions.length)],
-    ]
-      .filter(Boolean)
-      .join(" ") || "Unnamed Card";
-
-    elements.name.textContent = defaultName;
-
-    // Append card to container
+    finalizeCardAttributes(card);
     cardContainer.appendChild(card);
   };
 
-  // Function to generate multiple cards (pack)
   const generatePack = (count = 5) => {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
@@ -395,17 +252,14 @@ const generateAttack = () => {
     }
     cardContainer.appendChild(fragment);
 
-    // After appending, generate attributes for each new card
     const newCards = cardContainer.querySelectorAll(".card:not([data-generated])");
     newCards.forEach((card) => {
       card.dataset.generated = "true";
-      generateCardAttributes(card);
+      finalizeCardAttributes(card);
     });
   };
 
-  // Function to generate attributes for a given card element
-  const generateCardAttributes = (card) => {
-    // Extract card elements for easy access
+  const finalizeCardAttributes = (card) => {
     const elements = {
       type: card.querySelector(".card-type"),
       cost: card.querySelector(".card-cost"),
@@ -416,62 +270,103 @@ const generateAttack = () => {
       name: card.querySelector(".card-name"),
     };
 
-    // Randomly select a type based on weights
     const typeItem = pickRandomWeighted(cardData.types);
     const { value: type, exclude, extraPoints } = typeItem;
     const isChampion = type === "Champion";
 
-    let totalPoints;
     let attributes = {};
+    let totalPoints;
 
     do {
       totalPoints = extraPoints;
 
       // Generate Ability
       const ability = generateAbility();
-      attributes.ability = ability.description;
+      attributes.abilityDesc = ability.description;
+      attributes.isPassive = ability.isPassive;
       totalPoints += ability.pointValue;
 
-      // Generate Cost
+      // Generate Cost (Card Cost)
+      let costData = null;
       if (!exclude.includes("cost")) {
-        const cost = generateCost();
-        attributes.cost = cost.cost;
-        totalPoints += cost.pointValue;
+        costData = generateCost();
+        attributes.cost = costData.cost;
+        totalPoints += costData.pointValue;
       } else {
         attributes.cost = null;
       }
 
       // Generate HP
       if (!exclude.includes("hp")) {
-        const hp = generateHP();
-        attributes.hp = hp.hp;
-        totalPoints += hp.pointValue;
+        const hpData = generateHP();
+        attributes.hp = hpData.hp;
+        totalPoints += hpData.pointValue;
       } else {
         attributes.hp = null;
       }
 
       // Generate Attack
       if (!exclude.includes("attack")) {
-        const attack = generateAttack();
-        attributes.attack = attack.attack;
-        totalPoints += attack.pointValue;
+        const attackData = generateAttack();
+        attributes.attack = attackData.attack;
+        totalPoints += attackData.pointValue;
       } else {
         attributes.attack = null;
       }
 
       // Generate Energy
-      const energy = generateEnergy(isChampion);
-      attributes.energy = energy.energy;
-      totalPoints += energy.pointValue;
+      const energyData = generateEnergy(isChampion);
+      attributes.energy = energyData.energy;
+      totalPoints += energyData.pointValue;
 
-    } while (totalPoints < 7 || totalPoints > 10); // Ensure balanced points
+      // Generate AbilityCost if needed:
+      // Only if ability is active (not passive), and type is not Consumable, and AbilityCost not excluded.
+      if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
+        const abilityCostData = generateAbilityCost();
+        attributes.abilityCost = abilityCostData.abilityCost;
+        totalPoints += abilityCostData.pointValue;
+      } else {
+        attributes.abilityCost = null;
+      }
+
+    } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
+
+    // Now adjust the displayed text:
+    // Replace "Cost:" with "⚡"
+    // For abilities:
+    // - If passive and not Consumable: show description as is.
+    // - If passive and Consumable: prepend "This turn only:".
+    // - If active and not Consumable: prepend "[AbilityCost]⚡ " if abilityCost exists.
+    // - If active and Consumable: just show description (the card cost is the ability cost effectively).
+
+    let finalAbilityText = attributes.abilityDesc;
+
+    if (attributes.isPassive) {
+      if (type === "Consumable") {
+        // Passive + Consumable
+        finalAbilityText = "This turn only: " + finalAbilityText;
+      } else {
+        // Passive + Not Consumable
+        // Just leave the description as is.
+      }
+    } else {
+      // Ability is active
+      if (type !== "Consumable" && attributes.abilityCost !== null) {
+        // Active, non-consumable with ability cost
+        finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
+      } else {
+        // Active + Consumable or no ability cost (excluded)
+        // Just show the description as is.
+      }
+    }
 
     // Populate card elements
     elements.type.textContent = type;
-    elements.abilities.textContent = attributes.ability;
+    elements.abilities.textContent = finalAbilityText;
 
     if (attributes.cost !== null) {
-      elements.cost.textContent = `Cost: ${attributes.cost}`;
+      // Replace word "Cost:" with "⚡"
+      elements.cost.textContent = `⚡ ${attributes.cost}`;
       elements.cost.style.display = "";
     } else {
       elements.cost.style.display = "none";
@@ -499,19 +394,17 @@ const generateAttack = () => {
       elements.energy.style.display = "none";
     }
 
-    // Generate naming options
+    // Naming
     const [prefixOptions, rootOptions, suffixOptions] = [
       getRandomElements(cardData.naming.prefixes, 3),
       getRandomElements(cardData.naming.roots, 3),
       getRandomElements(cardData.naming.suffixes, 3),
     ];
 
-    // Store naming options in dataset for later use
     card.dataset.prefixOptions = JSON.stringify(prefixOptions);
     card.dataset.rootOptions = JSON.stringify(rootOptions);
     card.dataset.suffixOptions = JSON.stringify(suffixOptions);
 
-    // Set default name
     const defaultName = [
       prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
       rootOptions[Math.floor(Math.random() * rootOptions.length)],
@@ -523,25 +416,20 @@ const generateAttack = () => {
     elements.name.textContent = defaultName;
   };
 
-  // Function to toggle card selection
   const toggleCardSelection = (card) => {
     if (card.classList.contains("selected")) {
       card.classList.remove("selected");
       selectedCard = null;
       renameSelectedButton.disabled = true;
     } else {
-      // Deselect any previously selected card
       const previouslySelected = cardContainer.querySelector(".card.selected");
       if (previouslySelected) previouslySelected.classList.remove("selected");
-
-      // Select the new card
       card.classList.add("selected");
       selectedCard = card;
       renameSelectedButton.disabled = false;
     }
   };
 
-  // Function to populate rename options in the modal
   const populateRenameOptions = () => {
     if (!selectedCard) return;
 
@@ -553,7 +441,6 @@ const generateAttack = () => {
     populateDropdown(rootDropdown, rootOptions, false);
     populateDropdown(suffixDropdown, suffixOptions, true);
 
-    // Optionally, set a default selection
     const newName = [
       prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
       rootOptions[Math.floor(Math.random() * rootOptions.length)],
@@ -565,10 +452,8 @@ const generateAttack = () => {
     selectedCard.querySelector(".card-name").textContent = newName;
   };
 
-  // Function to populate a dropdown with options
   const populateDropdown = (dropdown, options, allowBlank) => {
-    dropdown.innerHTML = ""; // Clear existing options
-
+    dropdown.innerHTML = "";
     if (allowBlank) {
       const blankOption = document.createElement("option");
       blankOption.value = "";
@@ -584,7 +469,6 @@ const generateAttack = () => {
     });
   };
 
-  // Event handler for confirming the new name
   const handleConfirmName = () => {
     if (!selectedCard) return;
 
@@ -598,14 +482,12 @@ const generateAttack = () => {
 
     selectedCard.querySelector(".card-name").textContent = newName;
 
-    // Close the modal and reset selection
     renameModal.style.display = "none";
     selectedCard.classList.remove("selected");
     selectedCard = null;
     renameSelectedButton.disabled = true;
   };
 
-  // Event handler for closing the modal
   const handleCloseModal = () => {
     if (selectedCard) {
       selectedCard.classList.remove("selected");
@@ -615,14 +497,12 @@ const generateAttack = () => {
     renameModal.style.display = "none";
   };
 
-  // Close modal when clicking outside the modal content
   const handleOutsideClick = (event) => {
     if (event.target === renameModal) {
       handleCloseModal();
     }
   };
 
-  // Event listeners
   generateButton.addEventListener("click", generateCard);
   generatePackButton.addEventListener("click", () => generatePack(5));
   renameSelectedButton.addEventListener("click", () => {
