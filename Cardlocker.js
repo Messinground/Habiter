@@ -359,20 +359,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     elements.name.textContent = defaultName;
 
-    // Now select the image if cardImagesData is loaded
-    if (cardImagesData && cardImagesData[type]) {
-      const typeArtists = Object.keys(cardImagesData[type]);
-      if (typeArtists.length > 0) {
-        const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
-        const images = cardImagesData[type][randArtist];
-        if (images.length > 0) {
-          const randImage = images[Math.floor(Math.random() * images.length)];
-          elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
-          encounteredArtists.add(randArtist);
-          updateArtistList();
-        }
-      }
-    }
+	console.log("Type:", type);
+	console.log("cardImagesData:", cardImagesData);
+	if (cardImagesData && cardImagesData[type]) {
+	  console.log("Found images for type:", type, cardImagesData[type]);
+	  const typeArtists = Object.keys(cardImagesData[type]);
+	  console.log("typeArtists:", typeArtists);
+	  	// ... rest of image choosing logic
+		// Now select the image if cardImagesData is loaded
+		if (cardImagesData && cardImagesData[type]) {
+		  const typeArtists = Object.keys(cardImagesData[type]);
+		  if (typeArtists.length > 0) {
+			const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
+			const images = cardImagesData[type][randArtist];
+			if (images.length > 0) {
+			  const randImage = images[Math.floor(Math.random() * images.length)];
+			  elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+			  encounteredArtists.add(randArtist);
+			  updateArtistList();
+					}
+		  		}
+			}
+		} else {
+	  console.log("No images found for type:", type);
+	}
   };
 
   function updateArtistList() {
