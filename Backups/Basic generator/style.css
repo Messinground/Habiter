@@ -15,9 +15,9 @@ body {
 }
 
 header, main {
-  max-width: 1200px; /* Increased width to accommodate multiple cards */
+  max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  margin-bottom: 20px;
 }
 
 /* Navigation bar styles */
@@ -88,33 +88,6 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
-}
-
-/* Buttons Container Styles */
-#buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-#buttons-container button {
-  padding: 10px 20px;
-  cursor: pointer;
-  border: none;
-  background-color: #3498db;
-  color: #fff;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-#buttons-container button:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-#buttons-container button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
 }
 /* ------------------- */
 /* For the to-do list:*/
@@ -375,52 +348,34 @@ h1 {
 /* ----------------------- */
 
 #card-container {
-  display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping to new lines */
-  overflow-x: auto; /* Enable horizontal scrolling */
-  gap: 20px;
-  padding: 10px 0;
+	  width: 250px; /* Fixed width */
+	  height: 350px; /* Fixed height to maintain aspect ratio */
+	  border: 2px solid #000;
+	  background-color: #eee;
+	  padding: 10px;
+	  text-align: center;
+	  margin-bottom: 20px;
+	  box-sizing: border-box;
+	  position: relative; /* For absolute positioning inside */
+	}
+
+#card {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.card {
-  width: 250px; /* Fixed width */
-  min-width: 250px; /* Ensure consistent sizing */
-  height: 450px; /* Increased height to accommodate card content */
-  border: 2px solid #000;
-  background-color: #fff;
-  padding: 10px;
-  text-align: center;
-  box-sizing: border-box;
-  position: relative; /* For absolute positioning inside */
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer; /* Indicate that cards are clickable */
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.card.selected {
-  border-color: #e67e22;
-  box-shadow: 0 4px 12px rgba(231, 126, 34, 0.5);
-}
-
-.card h2 {
+#card h2 {
   margin: 5px 0;
   font-size: 1.2em;
-  color: #2c3e50;
 }
 
-.card-art {
+#card-art {
   width: 100%;
   height: 50%; /* Adjusted to occupy half the card height */
   background: #ddd;
   margin-bottom: 5px;
   object-fit: cover;
-  border-radius: 4px;
 }
 
 .card-stats {
@@ -429,132 +384,29 @@ h1 {
   padding: 5px 0;
 }
 
-.card-abilities {
+#card-abilities {
   font-size: 0.9em;
   overflow: hidden;
   text-overflow: ellipsis;
   height: 40px;
-  margin: 10px 0;
 }
 
-.card-energy {
-  font-weight: bold;
-  margin-bottom: 10px;
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
-/* Rename Modal Styles */
-
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5); /* Black with opacity */
+#rename-container {
+  margin-top: 20px;
 }
 
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 8px;
-    position: relative;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+label {
+  display: block;
+  margin-top: 10px;
 }
 
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: #000;
-    text-decoration: none;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
-
-.modal-content label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #555;
-}
-
-.modal-content select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-#confirm-name-button {
-    margin-top: 20px;
-    width: 100%;
-    background-color: #27ae60;
-    padding: 10px;
-    border: none;
-    color: #fff;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#confirm-name-button:hover {
-    background-color: #219150;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    #card-container {
-        gap: 15px;
-    }
-
-    .card {
-        width: 220px;
-        min-width: 220px;
-        height: 420px;
-    }
-}
-
-@media (max-width: 992px) {
-    .card {
-        width: 200px;
-        min-width: 200px;
-        height: 400px;
-    }
-}
-
-@media (max-width: 768px) {
-    .card {
-        width: 180px;
-        min-width: 180px;
-        height: 380px;
-    }
-}
-
-@media (max-width: 600px) {
-    .modal-content {
-        margin: 20% auto;
-    }
-
-    .card {
-        width: 160px;
-        min-width: 160px;
-        height: 360px;
-    }
+select {
+  width: 100%;
+  padding: 5px;
 }

@@ -1,0 +1,53 @@
+---
+layout: default
+title: "Home"
+interactive_tool_content: |
+  <div class="interactive-tool">
+    <!-- Your interactive tool code goes here -->
+    <p>This is my interactive tool!</p>
+  </div>
+---
+<!-- ___________________________ -->
+<!-- Your page content goes here -->
+<!-- ___________________________ -->
+
+  <header>
+    <h1>Trading Card Generator</h1>
+  </header>
+
+   <main>
+    <section id="card-container">
+      <article id="card">
+        <h2 id="card-name">[Card Name]</h2>
+		<div class="card-stats">
+			<p id="card-type">[Type]</p>
+			<p id="card-cost">[Cost]</p>
+		</div>
+        <img id="card-art" src="placeholder.jpg" alt="Card Art">
+        <div class="card-stats">
+          <p id="card-hp">HP: [HP]</p>
+          <p id="card-attack">Attack: [Attack Power]</p>
+        </div>
+        <p id="card-abilities">[Abilities Description]</p>
+		<p id="card-energy">[energy]</p>
+      </article>
+    </section>
+
+    <button id="generate-button">Generate Trading Card</button>
+
+    <section id="rename-container" style="display: none;">
+      <label for="prefix-dropdown">Prefix:</label>
+      <select id="prefix-dropdown"></select>
+
+      <label for="root-dropdown">Root:</label>
+      <select id="root-dropdown"></select>
+
+      <label for="suffix-dropdown">Suffix:</label>
+      <select id="suffix-dropdown"></select>
+
+      <button id="confirm-name-button">Confirm Name</button>
+    </section>
+  </main>
+
+  <!-- External JavaScript file -->
+  <script src="CardLocker.js"></script>
