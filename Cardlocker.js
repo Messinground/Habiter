@@ -48,7 +48,7 @@ const cardData = {
   ],
 
   types: [
-    { value: "Armor", weight: 3, exclude: ["attack", "AbilityCost"], extraPoints: 2 },
+    { value: "Armor", weight: 3, exclude: ["attack"], extraPoints: 2 },
     { value: "Weapon", weight: 2, exclude: ["hp"], extraPoints: 2 },
     { value: "Consumable", weight: 3, exclude: ["hp", "attack", "AbilityCost"], extraPoints: 4 },
     { value: "Pet", weight: 2, exclude: [], extraPoints: 0 },
@@ -144,14 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2 cost = 0 points
     // 3 cost = -2 points
     // 4 cost = -4 points
-    const costPointMap = { 0: 4, 1: 2, 2: 0, 3: -2, 4: -4 };
+    const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { cost, pointValue: costPointMap[cost] };
   };
 
   const generateAbilityCost = () => {
     const { min, max } = cardData.abilityCostRange;
     const abilityCost = generateMiddlePeakNumber(min, max);
-    const costPointMap = { 0: 4, 1: 2, 2: 0, 3: -2, 4: -4 };
+    const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { abilityCost, pointValue: costPointMap[abilityCost] };
   };
 
