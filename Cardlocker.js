@@ -8,7 +8,7 @@
 const cardData = {
   hpRange: { min: 25, max: 40 },
   costRange: { min: 0, max: 4 },
-  abilityCostRange: { min: 0, max: 4 }, // Similar distribution to cost
+  abilityCostRange: { min: 0, max: 4 },
   energyRange: {
     champion: { min: 2, max: 4 },
     others: { min: 0, max: 5 },
@@ -16,7 +16,7 @@ const cardData = {
   attackRange: { min: 3, max: 12 },
 
   abilities: [
-    // Active abilities (isPassive: false)
+    // (No changes to abilities here)
     { description: "Deal 5 damage.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Heal 5 HP.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Draw a card.", isPassive: false, weight: 1, pointValue: 2 },
@@ -41,7 +41,7 @@ const cardData = {
     { description: "Your champion gains +3 attack this turn only (Enrage).", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Next time opponent attacks this turn, they take 5 damage (Trap).", isPassive: false, weight: 1, pointValue: 3 },
 
-    // Passive abilities (isPassive: true)
+    // Passive abilities
     { description: "Your champion takes 1 less damage from attacks while active.", isPassive: true, weight: 1, pointValue: 1 },
     { description: "Your champion gains +2 attack while active.", isPassive: true, weight: 1, pointValue: 3 },
     { description: "Your pet gains +2 HP while active.", isPassive: true, weight: 1, pointValue: 2 },
@@ -55,26 +55,34 @@ const cardData = {
     { value: "Champion", weight: 1, exclude: ["cost"], extraPoints: -3 },
   ],
 
-  naming: {
-    roots: [
-      "Flame", "Shadow", "Iron", "Storm", "Frost", "Earth", "Light", "Thunder",
-      "Void", "Crystal", "Night", "Dawn", "Spirit", "Steel", "Ember", "Venom",
-      "Wind", "Stone", "Celestial", "Obsidian",
-    ],
-    prefixes: [
-      "Fiery", "Dark", "Mystic", "Blazing", "Shadowy", "Arcane", "Eternal",
-      "Storm", "Frost", "Ancient", "Celestial", "Vengeful", "Radiant",
-      "Divine", "Ghostly", "Thunderous", "Luminous", "Spectral", "Sacred",
-      "Enchanted",
-    ],
-    suffixes: [
-      "Destroyer", "Guardian", "Master", "Slayer", "Warrior", "Keeper",
-      "Savior", "Warden", "Conqueror", "Champion", "Seeker", "Avenger",
-      "Protector", "Ruler", "Reaper", "Invoker", "Harbinger", "Sentinel",
-      "Bane", "Lord",
-    ],
+naming: {
+  prefixes: {
+    All: ["Arcane", "Fabled", "Mirrored", "Dancing", "Smelly", "Whispering", "Recalcitrant", "Hollow", "Vibrant", "Enigmatic"],
+    Champion: ["Noble", "Fierce", "Valiant", "Brave", "Heroic", "Mighty", "Grand", "Regal", "Sage", "Warlord's"],
+    Armor: ["Iron", "Steel", "Bronze", "Sturdy", "Reinforced", "Heavy", "Runic", "Stone", "Oaken", "Molded"],
+    Weapon: ["Sharpened", "Forged", "Runed", "Sturdy", "Steeled", "Cursed", "Refined", "Blazing", "Frosted", "Eternal"],
+    Consumable: ["Hearty", "Aromatic", "Sour", "Sweet", "Bitter", "Fiery", "Frosted", "Golden", "Crisp", "Mystic"],
+    Pet: ["Loyal", "Wild", "Fierce", "Gentle", "Swift", "Ghostly", "Ancient", "Playful", "Cunning", "Timid"]
   },
+  roots: {
+    All: ["Construct", "Entity", "Curio", "Spark", "Fragment", "Cinder", "Riddle", "Echo", "Whimsy", "Corpus", "Symbiotic"],
+    Champion: ["Knight", "Guardian", "Champion", "Paladin", "Lord", "Emissary", "Marshal", "Warden", "Seer", "Monarch"],
+    Armor: ["Vestment", "Regalia", "Guard", "Aegis", "Barrier", "Shell", "Mantle", "Carapace", "Casing", "Ward"],
+    Weapon: ["Armament", "Kill Thing", "Artifact", "Wargear", "Instrument","Relic", "Contrivance", "Toothpick", "Device", "Engine"],
+    Consumable: ["Essence", "Mixture", "Infusion", "Ration", "Concoction", "Formula", "Blend", "Extract", "Elixir", "Substance"],
+    Pet: ["Beast", "Familiar", "Companion", "Creature", "Entity","Ally", "Partner", "Spirit", "Chimeric", "Guardian"]
+  },
+  suffixes: {
+    All: ["of Echoes", "of Whispers", "of the Beyond", "of Fates", "the Unbound", "of Ashes", "of Secrets", "the Quivering", "the Hidden", "of the Lost"],
+    Champion: ["of Dawn", "the Protector", "the Swift", "the Mighty", "the Fearless", "the Great", "the Valiant", "of Light", "the Wise", "the Bold"],
+    Armor: ["of Protection", "the Defender", "Guard", "Ward", "Shelter", "Bastion", "Aegis", "Barrier", "Bulwark", "of Stalwart"],
+    Weapon: ["of Cutting", "of Striking", "Edge", "Bite", "Fang", "Cleave", "Strike", "Claw", "Point", "of Fury"],
+    Consumable: ["of Vigor", "of Whimsy", "of the Gods", "of Duty", "Tonic", "Remedy", "Essence", "Cordial", "Draught", "Infusion"],
+    Pet: ["of the Forest", "of Night", "of Storms", "of the Wilds", "Whisper", "Wing", "Claw", "Fang", "Howl", "of the Glen"]
+  },
+}
 };
+
 
 // ======================================
 // Helper Functions and Event Listeners
@@ -394,12 +402,15 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.energy.style.display = "none";
     }
 
-    // Naming
-    const [prefixOptions, rootOptions, suffixOptions] = [
-      getRandomElements(cardData.naming.prefixes, 3),
-      getRandomElements(cardData.naming.roots, 3),
-      getRandomElements(cardData.naming.suffixes, 3),
-    ];
+	// Combine 'All' with the type-specific arrays
+	const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
+	const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
+	const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
+
+	// Now pick 3 random elements from each combined array
+	const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
+	const rootOptions = getRandomElements(combinedRootOptions, 3);
+	const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
 
     card.dataset.prefixOptions = JSON.stringify(prefixOptions);
     card.dataset.rootOptions = JSON.stringify(rootOptions);
