@@ -2,7 +2,9 @@
 
 // =============================
 // Trading Card Data Configuration
+// Users can edit the data below to customize the trading cards.
 // =============================
+
 const cardData = {
   hpRange: { min: 25, max: 40 },
   costRange: { min: 0, max: 4 },
@@ -14,6 +16,7 @@ const cardData = {
   attackRange: { min: 3, max: 12 },
 
   abilities: [
+    // (No changes to abilities here)
     { description: "Deal 5 damage.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Heal 5 HP.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Draw a card.", isPassive: false, weight: 1, pointValue: 2 },
@@ -37,6 +40,7 @@ const cardData = {
     { description: "Deal 10 damage to all opponents (Meteor Strike).", isPassive: false, weight: 1, pointValue: 5 },
     { description: "Your champion gains +3 attack this turn only (Enrage).", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Next time opponent attacks this turn, they take 5 damage (Trap).", isPassive: false, weight: 1, pointValue: 3 },
+
     // Passive abilities
     { description: "Your champion takes 1 less damage from attacks while active.", isPassive: true, weight: 1, pointValue: 1 },
     { description: "Your champion gains +2 attack while active.", isPassive: true, weight: 1, pointValue: 3 },
@@ -79,14 +83,18 @@ const cardData = {
   }
 };
 
+
 // ======================================
 // Global Variables for Images and Artists
 // ======================================
-let cardImagesData = null;
-let encounteredArtists = new Set();
+let cardImagesData = null; // Will hold JSON from cardImages.json
+let encounteredArtists = new Set(); // Track unique artists encountered
+// Ensure there's a <div id="artist-list"></div> in your HTML
 const artistListDiv = document.getElementById("artist-list");
 
-// Wait until DOM is loaded, then fetch cardImages.json
+// ======================================
+// Helper Functions and Event Listeners
+// ======================================
 document.addEventListener("DOMContentLoaded", async () => {
   const cardContainer = document.getElementById("card-container");
   const generateButton = document.getElementById("generate-button");
@@ -99,10 +107,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const suffixDropdown = document.getElementById("suffix-dropdown");
   const confirmNameButton = document.getElementById("confirm-name-button");
 
-  let selectedCard = null;
+  let selectedCard = null; // Reference to the card being renamed
+
+  // Range adjustments:
+  // We'll finalize 8 to 12 as the acceptable point range.
   const MIN_POINTS = 8;
   const MAX_POINTS = 12;
 
+  // Helper function to get N unique random elements from an array
   const getRandomElements = (arr, n) => {
     const shuffled = [...arr];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -119,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       random -= item.weight || 1;
       if (random <= 0) return item;
     }
-    return list[list.length - 1];
+    return list[list.length - 1]; // Fallback
   };
 
   const generateMiddlePeakNumber = (min, max) => {
@@ -229,6 +241,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     return card;
   };
 
+  const generateCard = () => {
+    const card = createCardElement();
+    finalizeCardAttributes(card);
+    cardContainer.appendChild(card);
+  };
+
+  const generatePack = (count = 5) => {
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+      const card = createCardElement();
+      fragment.appendChild(card);
+    }
+    cardContainer.appendChild(fragment);
+
+    const newCards = cardContainer.querySelectorAll(".card:not([data-generated])");
+    newCards.forEach((card) => {
+      card.dataset.generated = "true";
+      finalizeCardAttributes(card);
+    });
+  };
+
+  // Original finalizeCardAttributes function
   const finalizeCardAttributes = (card) => {
     const elements = {
       type: card.querySelector(".card-type"),
@@ -238,7 +272,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       abilities: card.querySelector(".card-abilities"),
       energy: card.querySelector(".card-energy"),
       name: card.querySelector(".card-name"),
-      img: card.querySelector(".card-art"),
     };
 
     const typeItem = pickRandomWeighted(cardData.types);
@@ -251,11 +284,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     do {
       totalPoints = extraPoints;
 
+      // Generate Ability
       const ability = generateAbility();
       attributes.abilityDesc = ability.description;
       attributes.isPassive = ability.isPassive;
       totalPoints += ability.pointValue;
 
+      // Generate Cost (Card Cost)
       let costData = null;
       if (!exclude.includes("cost")) {
         costData = generateCost();
@@ -265,6 +300,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         attributes.cost = null;
       }
 
+      // Generate HP
       if (!exclude.includes("hp")) {
         const hpData = generateHP();
         attributes.hp = hpData.hp;
@@ -273,6 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         attributes.hp = null;
       }
 
+      // Generate Attack
       if (!exclude.includes("attack")) {
         const attackData = generateAttack();
         attributes.attack = attackData.attack;
@@ -281,10 +318,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         attributes.attack = null;
       }
 
+      // Generate Energy
       const energyData = generateEnergy(isChampion);
       attributes.energy = energyData.energy;
       totalPoints += energyData.pointValue;
 
+      // Generate AbilityCost if needed:
       if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
         const abilityCostData = generateAbilityCost();
         attributes.abilityCost = abilityCostData.abilityCost;
@@ -292,17 +331,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         attributes.abilityCost = null;
       }
+
     } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
 
     let finalAbilityText = attributes.abilityDesc;
+
     if (attributes.isPassive) {
       if (type === "Consumable") {
         finalAbilityText = "This turn only: " + finalAbilityText;
-      }
+      } 
+      // else passive + not consumable, leave as is
     } else {
+      // Ability is active
       if (type !== "Consumable" && attributes.abilityCost !== null) {
         finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
-      }
+      } 
+      // else active + consumable or no ability cost, leave as is
     }
 
     elements.type.textContent = type;
@@ -358,30 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .join(" ") || "Unnamed Card";
 
     elements.name.textContent = defaultName;
-
-    // Now select the image if cardImagesData is loaded
-    if (cardImagesData && cardImagesData[type]) {
-      const typeArtists = Object.keys(cardImagesData[type]);
-      if (typeArtists.length > 0) {
-        const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
-        const images = cardImagesData[type][randArtist];
-        if (images.length > 0) {
-          const randImage = images[Math.floor(Math.random() * images.length)];
-          elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
-          encounteredArtists.add(randArtist);
-          updateArtistList();
-        }
-      }
-    }
   };
-
-  function updateArtistList() {
-    if (encounteredArtists.size > 0) {
-      artistListDiv.textContent = "Artist(s): " + Array.from(encounteredArtists).join(", ");
-    } else {
-      artistListDiv.textContent = "";
-    }
-  }
 
   const toggleCardSelection = (card) => {
     if (card.classList.contains("selected")) {
@@ -470,17 +491,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // First, load cardImages.json then enable card generation
-  generateButton.disabled = true;
-  generatePackButton.disabled = true;
-
-  const response = await fetch("cardImages.json");
-  cardImagesData = await response.json();
-
-  // Now that images are loaded, enable generation
-  generateButton.disabled = false;
-  generatePackButton.disabled = false;
-
   generateButton.addEventListener("click", generateCard);
   generatePackButton.addEventListener("click", () => generatePack(5));
   renameSelectedButton.addEventListener("click", () => {
@@ -492,4 +502,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   confirmNameButton.addEventListener("click", handleConfirmName);
   closeButton.addEventListener("click", handleCloseModal);
   window.addEventListener("click", handleOutsideClick);
+
+  // Fetch cardImages.json data
+  const response = await fetch("cardImages.json");
+  cardImagesData = await response.json();
+
+  // Now that we have cardImagesData, we redefine finalizeCardAttributes to include image selection
+  const originalFinalizeCardAttributes = finalizeCardAttributes;
+  finalizeCardAttributes = (card) => {
+    // Run the original logic
+    originalFinalizeCardAttributes(card);
+
+    const typeElement = card.querySelector(".card-type");
+    const imgElement = card.querySelector(".card-art");
+    const type = typeElement.textContent;
+
+    if (cardImagesData && cardImagesData[type]) {
+      const typeArtists = Object.keys(cardImagesData[type]);
+      if (typeArtists.length > 0) {
+        const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
+        const images = cardImagesData[type][randArtist];
+        if (images.length > 0) {
+          const randImage = images[Math.floor(Math.random() * images.length)];
+          imgElement.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+
+          encounteredArtists.add(randArtist);
+          updateArtistList();
+        }
+      }
+    }
+  };
+
+  function updateArtistList() {
+    if (encounteredArtists.size > 0) {
+      artistListDiv.textContent = "Artist(s): " + Array.from(encounteredArtists).join(", ");
+    } else {
+      artistListDiv.textContent = "";
+    }
+  }
+
 });
