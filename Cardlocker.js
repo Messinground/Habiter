@@ -55,40 +55,47 @@ const cardData = {
     { value: "Champion", weight: 1, exclude: ["cost"], extraPoints: -3 },
   ],
 
-naming: {
-  prefixes: {
-    All: ["Arcane", "Fabled", "Mirrored", "Dancing", "Smelly", "Whispering", "Recalcitrant", "Hollow", "Vibrant", "Enigmatic"],
-    Champion: ["Noble", "Fierce", "Valiant", "Brave", "Heroic", "Mighty", "Grand", "Regal", "Sage", "Warlord's"],
-    Armor: ["Iron", "Steel", "Bronze", "Sturdy", "Reinforced", "Heavy", "Runic", "Stone", "Oaken", "Molded"],
-    Weapon: ["Sharpened", "Forged", "Runed", "Sturdy", "Steeled", "Cursed", "Refined", "Blazing", "Frosted", "Eternal"],
-    Consumable: ["Hearty", "Aromatic", "Sour", "Sweet", "Bitter", "Fiery", "Frosted", "Golden", "Crisp", "Mystic"],
-    Pet: ["Loyal", "Wild", "Fierce", "Gentle", "Swift", "Ghostly", "Ancient", "Playful", "Cunning", "Timid"]
-  },
-  roots: {
-    All: ["Construct", "Entity", "Curio", "Spark", "Fragment", "Cinder", "Riddle", "Echo", "Whimsy", "Corpus", "Symbiotic"],
-    Champion: ["Knight", "Guardian", "Champion", "Paladin", "Lord", "Emissary", "Marshal", "Warden", "Seer", "Monarch"],
-    Armor: ["Vestment", "Regalia", "Guard", "Aegis", "Barrier", "Shell", "Mantle", "Carapace", "Casing", "Ward"],
-    Weapon: ["Armament", "Kill Thing", "Artifact", "Wargear", "Instrument","Relic", "Contrivance", "Toothpick", "Device", "Engine"],
-    Consumable: ["Essence", "Mixture", "Infusion", "Ration", "Concoction", "Formula", "Blend", "Extract", "Elixir", "Substance"],
-    Pet: ["Beast", "Familiar", "Companion", "Creature", "Entity", "Ally", "Partner", "Spirit", "Chimeric", "Guardian"]
-  },
-  suffixes: {
-    All: ["of Echoes", "of Whispers", "of the Beyond", "of Fates", "the Unbound", "of Ashes", "of Secrets", "the Quivering", "the Hidden", "of the Lost"],
-    Champion: ["of Dawn", "the Protector", "the Swift", "the Mighty", "the Fearless", "the Great", "the Valiant", "of Light", "the Wise", "the Bold"],
-    Armor: ["of Protection", "the Defender", "Guard", "Ward", "Shelter", "Bastion", "Aegis", "Barrier", "Bulwark", "of Stalwart"],
-    Weapon: ["of Cutting", "of Striking", "Edge", "Bite", "Fang", "Cleave", "Strike", "Claw", "Point", "of Fury"],
-    Consumable: ["of Vigor", "of Whimsy", "of the Gods", "of Duty", "Tonic", "Remedy", "Essence", "Cordial", "Draught", "Infusion"],
-    Pet: ["of the Forest", "of Night", "of Storms", "of the Wilds", "Whisper", "Wing", "Claw", "Fang", "Howl", "of the Glen"]
-  },
-}
+  naming: {
+    prefixes: {
+      All: ["Arcane", "Fabled", "Mirrored", "Dancing", "Smelly", "Whispering", "Recalcitrant", "Hollow", "Vibrant", "Enigmatic"],
+      Champion: ["Noble", "Fierce", "Valiant", "Brave", "Heroic", "Mighty", "Grand", "Regal", "Sage", "Warlord's"],
+      Armor: ["Iron", "Steel", "Bronze", "Sturdy", "Reinforced", "Heavy", "Runic", "Stone", "Oaken", "Molded"],
+      Weapon: ["Sharpened", "Forged", "Runed", "Sturdy", "Steeled", "Cursed", "Refined", "Blazing", "Frosted", "Eternal"],
+      Consumable: ["Hearty", "Aromatic", "Sour", "Sweet", "Bitter", "Fiery", "Frosted", "Golden", "Crisp", "Mystic"],
+      Pet: ["Loyal", "Wild", "Fierce", "Gentle", "Swift", "Ghostly", "Ancient", "Playful", "Cunning", "Timid"]
+    },
+    roots: {
+      All: ["Construct", "Entity", "Curio", "Spark", "Fragment", "Cinder", "Riddle", "Echo", "Whimsy", "Corpus", "Symbiotic"],
+      Champion: ["Knight", "Guardian", "Champion", "Paladin", "Lord", "Emissary", "Marshal", "Warden", "Seer", "Monarch"],
+      Armor: ["Vestment", "Regalia", "Guard", "Aegis", "Barrier", "Shell", "Mantle", "Carapace", "Casing", "Ward"],
+      Weapon: ["Armament", "Kill Thing", "Artifact", "Wargear", "Instrument","Relic", "Contrivance", "Toothpick", "Device", "Engine"],
+      Consumable: ["Essence", "Mixture", "Infusion", "Ration", "Concoction", "Formula", "Blend", "Extract", "Elixir", "Substance"],
+      Pet: ["Beast", "Familiar", "Companion", "Creature", "Entity", "Ally", "Partner", "Spirit", "Chimeric", "Guardian"]
+    },
+    suffixes: {
+      All: ["of Echoes", "of Whispers", "of the Beyond", "of Fates", "the Unbound", "of Ashes", "of Secrets", "the Quivering", "the Hidden", "of the Lost"],
+      Champion: ["of Dawn", "the Protector", "the Swift", "the Mighty", "the Fearless", "the Great", "the Valiant", "of Light", "the Wise", "the Bold"],
+      Armor: ["of Protection", "the Defender", "Guard", "Ward", "Shelter", "Bastion", "Aegis", "Barrier", "Bulwark", "of Stalwart"],
+      Weapon: ["of Cutting", "of Striking", "Edge", "Bite", "Fang", "Cleave", "Strike", "Claw", "Point", "of Fury"],
+      Consumable: ["of Vigor", "of Whimsy", "of the Gods", "of Duty", "Tonic", "Remedy", "Essence", "Cordial", "Draught", "Infusion"],
+      Pet: ["of the Forest", "of Night", "of Storms", "of the Wilds", "Whisper", "Wing", "Claw", "Fang", "Howl", "of the Glen"]
+    },
+  }
 };
 
 
 // ======================================
+// Global Variables for Images and Artists
+// ======================================
+let cardImagesData = null; // Will hold JSON from cardImages.json
+let encounteredArtists = new Set(); // Track unique artists encountered
+// Ensure there's a <div id="artist-list"></div> in your HTML
+const artistListDiv = document.getElementById("artist-list");
+
+// ======================================
 // Helper Functions and Event Listeners
 // ======================================
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const cardContainer = document.getElementById("card-container");
   const generateButton = document.getElementById("generate-button");
   const generatePackButton = document.getElementById("generate-pack-button");
@@ -103,9 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedCard = null; // Reference to the card being renamed
 
   // Range adjustments:
-  // Previously 7-10 for max ~14. Now max ~19 originally considered, but we adjusted range to 8-12.
   // We'll finalize 8 to 12 as the acceptable point range.
-
   const MIN_POINTS = 8;
   const MAX_POINTS = 12;
 
@@ -119,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return shuffled.slice(0, n);
   };
 
-  // Function to pick a random item based on weights
   const pickRandomWeighted = (list) => {
     const totalWeight = list.reduce((acc, item) => acc + (item.weight || 1), 0);
     let random = Math.random() * totalWeight;
@@ -141,17 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return pickRandomWeighted(range).value;
   };
 
-  // We can reuse generateMiddlePeakNumber for AbilityCost too, since we want a similar distribution.
-
   const generateCost = () => {
     const { min, max } = cardData.costRange;
     const cost = generateMiddlePeakNumber(min, max);
-    // Cost point system:
-    // 0 cost = +4 points
-    // 1 cost = +2 points
-    // 2 cost = 0 points
-    // 3 cost = -2 points
-    // 4 cost = -4 points
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { cost, pointValue: costPointMap[cost] };
   };
@@ -163,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return { abilityCost, pointValue: costPointMap[abilityCost] };
   };
 
-  // Generates a biased random number between a and b using exponential decay (for energy)
   const generateBiasedRandom = (a, b) => {
     const c = a + 0.2 * (b - a);
     const targetProbability = 0.7;
@@ -267,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  // Original finalizeCardAttributes function
   const finalizeCardAttributes = (card) => {
     const elements = {
       type: card.querySelector(".card-type"),
@@ -328,7 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
       totalPoints += energyData.pointValue;
 
       // Generate AbilityCost if needed:
-      // Only if ability is active (not passive), and type is not Consumable, and AbilityCost not excluded.
       if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
         const abilityCostData = generateAbilityCost();
         attributes.abilityCost = abilityCostData.abilityCost;
@@ -339,41 +334,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
 
-    // Now adjust the displayed text:
-    // Replace "Cost:" with "⚡"
-    // For abilities:
-    // - If passive and not Consumable: show description as is.
-    // - If passive and Consumable: prepend "This turn only:".
-    // - If active and not Consumable: prepend "[AbilityCost]⚡ " if abilityCost exists.
-    // - If active and Consumable: just show description (the card cost is the ability cost effectively).
-
     let finalAbilityText = attributes.abilityDesc;
 
     if (attributes.isPassive) {
       if (type === "Consumable") {
-        // Passive + Consumable
         finalAbilityText = "This turn only: " + finalAbilityText;
-      } else {
-        // Passive + Not Consumable
-        // Just leave the description as is.
-      }
+      } 
+      // else passive + not consumable, leave as is
     } else {
       // Ability is active
       if (type !== "Consumable" && attributes.abilityCost !== null) {
-        // Active, non-consumable with ability cost
         finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
-      } else {
-        // Active + Consumable or no ability cost (excluded)
-        // Just show the description as is.
-      }
+      } 
+      // else active + consumable or no ability cost, leave as is
     }
 
-    // Populate card elements
     elements.type.textContent = type;
     elements.abilities.textContent = finalAbilityText;
 
     if (attributes.cost !== null) {
-      // Replace word "Cost:" with "⚡"
       elements.cost.textContent = `⚡ ${attributes.cost}`;
       elements.cost.style.display = "";
     } else {
@@ -402,15 +381,13 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.energy.style.display = "none";
     }
 
-	// Combine 'All' with the type-specific arrays
-	const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
-	const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
-	const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
+    const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
+    const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
+    const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
 
-	// Now pick 3 random elements from each combined array
-	const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
-	const rootOptions = getRandomElements(combinedRootOptions, 3);
-	const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
+    const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
+    const rootOptions = getRandomElements(combinedRootOptions, 3);
+    const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
 
     card.dataset.prefixOptions = JSON.stringify(prefixOptions);
     card.dataset.rootOptions = JSON.stringify(rootOptions);
@@ -525,4 +502,43 @@ document.addEventListener("DOMContentLoaded", () => {
   confirmNameButton.addEventListener("click", handleConfirmName);
   closeButton.addEventListener("click", handleCloseModal);
   window.addEventListener("click", handleOutsideClick);
+
+  // Fetch cardImages.json data
+  const response = await fetch("cardImages.json");
+  cardImagesData = await response.json();
+
+  // Now that we have cardImagesData, we redefine finalizeCardAttributes to include image selection
+  const originalFinalizeCardAttributes = finalizeCardAttributes;
+  finalizeCardAttributes = (card) => {
+    // Run the original logic
+    originalFinalizeCardAttributes(card);
+
+    const typeElement = card.querySelector(".card-type");
+    const imgElement = card.querySelector(".card-art");
+    const type = typeElement.textContent;
+
+    if (cardImagesData && cardImagesData[type]) {
+      const typeArtists = Object.keys(cardImagesData[type]);
+      if (typeArtists.length > 0) {
+        const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
+        const images = cardImagesData[type][randArtist];
+        if (images.length > 0) {
+          const randImage = images[Math.floor(Math.random() * images.length)];
+          imgElement.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+
+          encounteredArtists.add(randArtist);
+          updateArtistList();
+        }
+      }
+    }
+  };
+
+  function updateArtistList() {
+    if (encounteredArtists.size > 0) {
+      artistListDiv.textContent = "Artist(s): " + Array.from(encounteredArtists).join(", ");
+    } else {
+      artistListDiv.textContent = "";
+    }
+  }
+
 });

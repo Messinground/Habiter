@@ -1,3 +1,6 @@
+----------------------------------
+Website Layout and testing
+----------------------------------
 To make navigation easier, I am utilizing themes (native support on Github) for CSS. I installed this on my own PC using Ruby and Jekyll.
 
 I don't really know what Ruby IS but it's apparently required to be installed to test this locally. So install I shall.
@@ -25,3 +28,14 @@ Every page needs this text at the very top in order to automatically appear on t
 
 Change "false" to "true" if you want it to appear on the navbar.
 You may also refer to PageTemplate.html to see how a page should be formatted.
+
+This is the ONLY WAY to test the layout AND the image-part of the generator. It does not work without either publishing it or running a local server like this.
+
+----------------------------------
+Functionality
+----------------------------------
+All the generative code is in Cardlocker.js
+
+If you ever add more images for cards:
+Open a terminal in the root folder and type in "Python generate_image_json.py"
+This will automatically update the list of pictures in cardImages.json, which Cardlocker.js uses to find every picture and artist.
