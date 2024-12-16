@@ -70,7 +70,7 @@ naming: {
     Armor: ["Vestment", "Regalia", "Guard", "Aegis", "Barrier", "Shell", "Mantle", "Carapace", "Casing", "Ward"],
     Weapon: ["Armament", "Kill Thing", "Artifact", "Wargear", "Instrument","Relic", "Contrivance", "Toothpick", "Device", "Engine"],
     Consumable: ["Essence", "Mixture", "Infusion", "Ration", "Concoction", "Formula", "Blend", "Extract", "Elixir", "Substance"],
-    Pet: ["Beast", "Familiar", "Companion", "Creature", "Entity","Ally", "Partner", "Spirit", "Chimeric", "Guardian"]
+    Pet: ["Beast", "Familiar", "Companion", "Creature", "Entity", "Ally", "Partner", "Spirit", "Chimeric", "Guardian"]
   },
   suffixes: {
     All: ["of Echoes", "of Whispers", "of the Beyond", "of Fates", "the Unbound", "of Ashes", "of Secrets", "the Quivering", "the Hidden", "of the Lost"],
