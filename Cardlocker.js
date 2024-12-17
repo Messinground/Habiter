@@ -2,7 +2,9 @@
 
 // =============================
 // Trading Card Data Configuration
+// Users can edit the data below to customize the trading cards.
 // =============================
+
 const cardData = {
   hpRange: { min: 25, max: 40 },
   costRange: { min: 0, max: 4 },
@@ -14,6 +16,7 @@ const cardData = {
   attackRange: { min: 3, max: 12 },
 
   abilities: [
+    // (No changes to abilities here)
     { description: "Deal 5 damage.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Heal 5 HP.", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Draw a card.", isPassive: false, weight: 1, pointValue: 2 },
@@ -37,6 +40,7 @@ const cardData = {
     { description: "Deal 10 damage to all opponents (Meteor Strike).", isPassive: false, weight: 1, pointValue: 5 },
     { description: "Your champion gains +3 attack this turn only (Enrage).", isPassive: false, weight: 1, pointValue: 2 },
     { description: "Next time opponent attacks this turn, they take 5 damage (Trap).", isPassive: false, weight: 1, pointValue: 3 },
+
     // Passive abilities
     { description: "Your champion takes 1 less damage from attacks while active.", isPassive: true, weight: 1, pointValue: 1 },
     { description: "Your champion gains +2 attack while active.", isPassive: true, weight: 1, pointValue: 3 },
@@ -76,15 +80,15 @@ const cardData = {
       Consumable: ["of Vigor", "of Whimsy", "of the Gods", "of Duty", "Tonic", "Remedy", "Essence", "Cordial", "Draught", "Infusion"],
       Pet: ["of the Forest", "of Night", "of Storms", "of the Wilds", "Whisper", "Wing", "Claw", "Fang", "Howl", "of the Glen"]
     },
-  }
+  },
 };
 
-// Global variables for images and artists
+// ADDED: Global variables for images and artists
 let cardImagesData = null;
 let encounteredArtists = new Set();
 const artistListDiv = document.getElementById("artist-list");
 
-// Define generateCard before DOMContentLoaded so it's available
+// Define generateCard and generatePack before DOMContentLoaded so they exist when event listeners are attached
 const generateCard = () => {
   const card = createCardElement();
   finalizeCardAttributes(card);
@@ -106,264 +110,12 @@ const generatePack = (count = 5) => {
   });
 };
 
-// Finalize card attributes and pick image and artist
-const finalizeCardAttributes = (card) => {
-  const elements = {
-    type: card.querySelector(".card-type"),
-    cost: card.querySelector(".card-cost"),
-    hp: card.querySelector(".card-hp"),
-    attack: card.querySelector(".card-attack"),
-    abilities: card.querySelector(".card-abilities"),
-    energy: card.querySelector(".card-energy"),
-    name: card.querySelector(".card-name"),
-    img: card.querySelector(".card-art"),
-  };
-
-  const MIN_POINTS = 8;
-  const MAX_POINTS = 12;
-
-  const typeItem = pickRandomWeighted(cardData.types);
-  const { value: type, exclude, extraPoints } = typeItem;
-  const isChampion = type === "Champion";
-
-  let attributes = {};
-  let totalPoints;
-
-  do {
-    totalPoints = extraPoints;
-
-    const ability = generateAbility();
-    attributes.abilityDesc = ability.description;
-    attributes.isPassive = ability.isPassive;
-    totalPoints += ability.pointValue;
-
-    let costData = null;
-    if (!exclude.includes("cost")) {
-      costData = generateCost();
-      attributes.cost = costData.cost;
-      totalPoints += costData.pointValue;
-    } else {
-      attributes.cost = null;
-    }
-
-    if (!exclude.includes("hp")) {
-      const hpData = generateHP();
-      attributes.hp = hpData.hp;
-      totalPoints += hpData.pointValue;
-    } else {
-      attributes.hp = null;
-    }
-
-    if (!exclude.includes("attack")) {
-      const attackData = generateAttack();
-      attributes.attack = attackData.attack;
-      totalPoints += attackData.pointValue;
-    } else {
-      attributes.attack = null;
-    }
-
-    const energyData = generateEnergy(isChampion);
-    attributes.energy = energyData.energy;
-    totalPoints += energyData.pointValue;
-
-    if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
-      const abilityCostData = generateAbilityCost();
-      attributes.abilityCost = abilityCostData.abilityCost;
-      totalPoints += abilityCostData.pointValue;
-    } else {
-      attributes.abilityCost = null;
-    }
-
-  } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
-
-  let finalAbilityText = attributes.abilityDesc;
-  if (attributes.isPassive) {
-    if (elements.type.textContent === "Consumable") {
-      finalAbilityText = "This turn only: " + finalAbilityText;
-    }
-  } else {
-    if (elements.type.textContent !== "Consumable" && attributes.abilityCost !== null) {
-      finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
-    }
-  }
-
-  elements.type.textContent = type;
-  elements.abilities.textContent = finalAbilityText;
-
-  if (attributes.cost !== null) {
-    elements.cost.textContent = `⚡ ${attributes.cost}`;
-    elements.cost.style.display = "";
-  } else {
-    elements.cost.style.display = "none";
-  }
-
-  if (attributes.hp !== null) {
-    elements.hp.textContent = `HP: ${attributes.hp}`;
-    elements.hp.style.display = "";
-  } else {
-    elements.hp.style.display = "none";
-  }
-
-  if (attributes.attack !== null) {
-    elements.attack.textContent = `Attack: ${attributes.attack}`;
-    elements.attack.style.display = "";
-  } else {
-    elements.attack.style.display = "none";
-  }
-
-  if (attributes.energy !== 0) {
-    elements.energy.textContent = `Energy: ${attributes.energy}`;
-    elements.energy.style.display = "";
-  } else {
-    elements.energy.textContent = "";
-    elements.energy.style.display = "none";
-  }
-
-  const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
-  const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
-  const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
-
-  const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
-  const rootOptions = getRandomElements(combinedRootOptions, 3);
-  const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
-
-  card.dataset.prefixOptions = JSON.stringify(prefixOptions);
-  card.dataset.rootOptions = JSON.stringify(rootOptions);
-  card.dataset.suffixOptions = JSON.stringify(suffixOptions);
-
-  const defaultName = [
-    prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
-    rootOptions[Math.floor(Math.random() * rootOptions.length)],
-    suffixOptions[Math.floor(Math.random() * suffixOptions.length)],
-  ]
-    .filter(Boolean)
-    .join(" ") || "Unnamed Card";
-
-  elements.name.textContent = defaultName;
-
-  // Attempt to set image and artist if data is available
-  console.log("Attempting to set image for type:", type);
-  if (cardImagesData && cardImagesData[type]) {
-    const typeArtists = Object.keys(cardImagesData[type]);
-    console.log("Found artists for type:", type, typeArtists);
-    if (typeArtists.length > 0) {
-      const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
-      const images = cardImagesData[type][randArtist];
-      console.log("Choosing artist:", randArtist, "images:", images);
-      if (images && images.length > 0) {
-        const randImage = images[Math.floor(Math.random() * images.length)];
-        console.log("Selected image:", randImage);
-        elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
-        encounteredArtists.add(randArtist);
-        updateArtistList();
-      } else {
-        console.log("No images found for artist:", randArtist, "in type:", type);
-      }
-    } else {
-      console.log("No artists found for type:", type);
-    }
-  } else {
-    console.log("No cardImagesData for type:", type);
-  }
-};
-
-function updateArtistList() {
-  if (encounteredArtists.size > 0) {
-    artistListDiv.textContent = "Artist(s): " + Array.from(encounteredArtists).join(", ");
-  } else {
-    artistListDiv.textContent = "";
-  }
-}
-
-function toggleCardSelection(card) {
-  if (card.classList.contains("selected")) {
-    card.classList.remove("selected");
-    selectedCard = null;
-    renameSelectedButton.disabled = true;
-  } else {
-    const previouslySelected = cardContainer.querySelector(".card.selected");
-    if (previouslySelected) previouslySelected.classList.remove("selected");
-    card.classList.add("selected");
-    selectedCard = card;
-    renameSelectedButton.disabled = false;
-  }
-}
-
-function populateRenameOptions() {
-  if (!selectedCard) return;
-
-  const prefixOptions = JSON.parse(selectedCard.dataset.prefixOptions);
-  const rootOptions = JSON.parse(selectedCard.dataset.rootOptions);
-  const suffixOptions = JSON.parse(selectedCard.dataset.suffixOptions);
-
-  populateDropdown(prefixDropdown, prefixOptions, true);
-  populateDropdown(rootDropdown, rootOptions, false);
-  populateDropdown(suffixDropdown, suffixOptions, true);
-
-  const newName = [
-    prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
-    rootOptions[Math.floor(Math.random() * rootOptions.length)],
-    suffixOptions[Math.floor(Math.random() * suffixOptions.length)],
-  ]
-    .filter(Boolean)
-    .join(" ") || "Unnamed Card";
-
-  selectedCard.querySelector(".card-name").textContent = newName;
-}
-
-function populateDropdown(dropdown, options, allowBlank) {
-  dropdown.innerHTML = "";
-  if (allowBlank) {
-    const blankOption = document.createElement("option");
-    blankOption.value = "";
-    blankOption.textContent = "None";
-    dropdown.appendChild(blankOption);
-  }
-
-  options.forEach((option) => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option;
-    optionElement.textContent = option;
-    dropdown.appendChild(optionElement);
-  });
-}
-
-function handleConfirmName() {
-  if (!selectedCard) return;
-
-  const chosenPrefix = prefixDropdown.value;
-  const chosenRoot = rootDropdown.value;
-  const chosenSuffix = suffixDropdown.value;
-
-  const newName = [chosenPrefix, chosenRoot, chosenSuffix]
-    .filter(Boolean)
-    .join(" ") || "Unnamed Card";
-
-  selectedCard.querySelector(".card-name").textContent = newName;
-
-  renameModal.style.display = "none";
-  selectedCard.classList.remove("selected");
-  selectedCard = null;
-  renameSelectedButton.disabled = true;
-}
-
-function handleCloseModal() {
-  if (selectedCard) {
-    selectedCard.classList.remove("selected");
-    selectedCard = null;
-    renameSelectedButton.disabled = true;
-  }
-  renameModal.style.display = "none";
-}
-
-function handleOutsideClick(event) {
-  if (event.target === renameModal) {
-    handleCloseModal();
-  }
-}
+// ======================================
+// End of Trading Card Data Configuration
+// ======================================
 
 document.addEventListener("DOMContentLoaded", async () => {
-  window.cardContainer = document.getElementById("card-container");
+  const cardContainer = document.getElementById("card-container");
   const generateButton = document.getElementById("generate-button");
   const generatePackButton = document.getElementById("generate-pack-button");
   const renameSelectedButton = document.getElementById("rename-selected-button");
@@ -374,7 +126,419 @@ document.addEventListener("DOMContentLoaded", async () => {
   const suffixDropdown = document.getElementById("suffix-dropdown");
   const confirmNameButton = document.getElementById("confirm-name-button");
 
-  // Disable generation until cardImages.json is loaded
+  let selectedCard = null; // Reference to the card being renamed
+
+  // Range adjustments:
+  // Previously 7-10 for max ~14. Now max ~19 originally considered, but we adjusted range to 8-12.
+  // We'll finalize 8 to 12 as the acceptable point range.
+
+  const MIN_POINTS = 8;
+  const MAX_POINTS = 12;
+
+  // Helper function to get N unique random elements from an array
+  const getRandomElements = (arr, n) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, n);
+  };
+
+  // Function to pick a random item based on weights
+  const pickRandomWeighted = (list) => {
+    const totalWeight = list.reduce((acc, item) => acc + (item.weight || 1), 0);
+    let random = Math.random() * totalWeight;
+    for (const item of list) {
+      random -= item.weight || 1;
+      if (random <= 0) return item;
+    }
+    return list[list.length - 1]; // Fallback
+  };
+
+  const generateMiddlePeakNumber = (min, max) => {
+    const mid = (min + max) / 2;
+    const maxDistance = Math.floor((max - min) / 2);
+    const range = Array.from({ length: max - min + 1 }, (_, i) => {
+      const value = min + i;
+      const distance = Math.abs(value - mid);
+      return { value, weight: maxDistance - distance + 1 };
+    });
+    return pickRandomWeighted(range).value;
+  };
+
+  // We can reuse generateMiddlePeakNumber for AbilityCost too, since we want a similar distribution.
+
+  const generateCost = () => {
+    const { min, max } = cardData.costRange;
+    const cost = generateMiddlePeakNumber(min, max);
+    // Cost point system:
+    // 0 cost = +4 points
+    // 1 cost = +2 points
+    // 2 cost = 0 points
+    // 3 cost = -2 points
+    // 4 cost = -4 points
+    const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
+    return { cost, pointValue: costPointMap[cost] };
+  };
+
+  const generateAbilityCost = () => {
+    const { min, max } = cardData.abilityCostRange;
+    const abilityCost = generateMiddlePeakNumber(min, max);
+    const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
+    return { abilityCost, pointValue: costPointMap[abilityCost] };
+  };
+
+  // Generates a biased random number between a and b using exponential decay
+  const generateBiasedRandom = (a, b) => {
+    const c = a + 0.2 * (b - a);
+    const targetProbability = 0.7;
+    const k = -Math.log(1 - targetProbability) / (c - a);
+    const u = Math.random();
+    return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
+  };
+
+  const generateHP = () => {
+    const { min, max } = cardData.hpRange;
+    const hp = generateMiddlePeakNumber(min, max);
+
+    const range = max - min;
+    const firstThreshold = min + range * 0.2; 
+    const secondThreshold = min + range * 0.6; 
+
+    let pointValue;
+    if (hp <= firstThreshold) {
+      pointValue = 1;
+    } else if (hp <= secondThreshold) {
+      pointValue = 2;
+    } else {
+      pointValue = 3;
+    }
+
+    return { hp, pointValue };
+  };
+
+  const generateEnergy = (isChampion) => {
+    const { min, max } = isChampion
+      ? cardData.energyRange.champion
+      : cardData.energyRange.others;
+
+    const energy = Math.floor(generateBiasedRandom(min, max));
+    const pointValue = energy; 
+    return { energy, pointValue };
+  };
+
+  const generateAttack = () => {
+    const { min, max } = cardData.attackRange;
+    const attack = generateMiddlePeakNumber(min, max);
+
+    const range = max - min;
+    const firstThreshold = min + range * 0.2;
+    const secondThreshold = min + range * 0.6; 
+
+    let pointValue;
+    if (attack <= firstThreshold) {
+      pointValue = 1;
+    } else if (attack <= secondThreshold) {
+      pointValue = 2;
+    } else {
+      pointValue = 3;
+    }
+
+    return { attack, pointValue };
+  };
+
+  const generateAbility = () => {
+    const ability = pickRandomWeighted(cardData.abilities);
+    return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
+  };
+
+  const createCardElement = () => {
+    const card = document.createElement("article");
+    card.classList.add("card");
+    card.innerHTML = `
+      <h2 class="card-name">[Card Name]</h2>
+      <div class="card-stats">
+        <p class="card-type">[Type]</p>
+        <p class="card-cost">[Cost]</p>
+      </div>
+      <img class="card-art" src="placeholder.jpg" alt="Card Art">
+      <div class="card-stats">
+        <p class="card-hp">HP: [HP]</p>
+        <p class="card-attack">Attack: [Attack Power]</p>
+      </div>
+      <p class="card-abilities">[Abilities Description]</p>
+      <p class="card-energy">Energy: [Energy]</p>
+    `;
+    card.addEventListener("click", () => toggleCardSelection(card));
+    return card;
+  };
+
+  // We have already defined generateCard and generatePack above.
+
+  const finalizeCardAttributes = (card) => {
+    const elements = {
+      type: card.querySelector(".card-type"),
+      cost: card.querySelector(".card-cost"),
+      hp: card.querySelector(".card-hp"),
+      attack: card.querySelector(".card-attack"),
+      abilities: card.querySelector(".card-abilities"),
+      energy: card.querySelector(".card-energy"),
+      name: card.querySelector(".card-name"),
+      img: card.querySelector(".card-art"),
+    };
+
+    const typeItem = pickRandomWeighted(cardData.types);
+    const { value: type, exclude, extraPoints } = typeItem;
+    const isChampion = type === "Champion";
+
+    let attributes = {};
+    let totalPoints;
+
+    do {
+      totalPoints = extraPoints;
+
+      // Generate Ability
+      const ability = generateAbility();
+      attributes.abilityDesc = ability.description;
+      attributes.isPassive = ability.isPassive;
+      totalPoints += ability.pointValue;
+
+      // Generate Cost
+      let costData = null;
+      if (!exclude.includes("cost")) {
+        costData = generateCost();
+        attributes.cost = costData.cost;
+        totalPoints += costData.pointValue;
+      } else {
+        attributes.cost = null;
+      }
+
+      // Generate HP
+      if (!exclude.includes("hp")) {
+        const hpData = generateHP();
+        attributes.hp = hpData.hp;
+        totalPoints += hpData.pointValue;
+      } else {
+        attributes.hp = null;
+      }
+
+      // Generate Attack
+      if (!exclude.includes("attack")) {
+        const attackData = generateAttack();
+        attributes.attack = attackData.attack;
+        totalPoints += attackData.pointValue;
+      } else {
+        attributes.attack = null;
+      }
+
+      // Generate Energy
+      const energyData = generateEnergy(isChampion);
+      attributes.energy = energyData.energy;
+      totalPoints += energyData.pointValue;
+
+      // Generate AbilityCost if needed
+      if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
+        const abilityCostData = generateAbilityCost();
+        attributes.abilityCost = abilityCostData.abilityCost;
+        totalPoints += abilityCostData.pointValue;
+      } else {
+        attributes.abilityCost = null;
+      }
+
+    } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
+
+    // Now adjust the displayed text:
+    let finalAbilityText = attributes.abilityDesc;
+
+    if (attributes.isPassive) {
+      if (type === "Consumable") {
+        finalAbilityText = "This turn only: " + finalAbilityText;
+      }
+    } else {
+      if (type !== "Consumable" && attributes.abilityCost !== null) {
+        finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
+      }
+    }
+
+    elements.type.textContent = type;
+    elements.abilities.textContent = finalAbilityText;
+
+    if (attributes.cost !== null) {
+      elements.cost.textContent = `⚡ ${attributes.cost}`;
+      elements.cost.style.display = "";
+    } else {
+      elements.cost.style.display = "none";
+    }
+
+    if (attributes.hp !== null) {
+      elements.hp.textContent = `HP: ${attributes.hp}`;
+      elements.hp.style.display = "";
+    } else {
+      elements.hp.style.display = "none";
+    }
+
+    if (attributes.attack !== null) {
+      elements.attack.textContent = `Attack: ${attributes.attack}`;
+      elements.attack.style.display = "";
+    } else {
+      elements.attack.style.display = "none";
+    }
+
+    if (attributes.energy !== 0) {
+      elements.energy.textContent = `Energy: ${attributes.energy}`;
+      elements.energy.style.display = "";
+    } else {
+      elements.energy.textContent = "";
+      elements.energy.style.display = "none";
+    }
+
+    // Combine 'All' with the type-specific arrays
+    const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
+    const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
+    const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
+
+    // Now pick 3 random elements from each combined array
+    const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
+    const rootOptions = getRandomElements(combinedRootOptions, 3);
+    const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
+
+    card.dataset.prefixOptions = JSON.stringify(prefixOptions);
+    card.dataset.rootOptions = JSON.stringify(rootOptions);
+    card.dataset.suffixOptions = JSON.stringify(suffixOptions);
+
+    const defaultName = [
+      prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
+      rootOptions[Math.floor(Math.random() * rootOptions.length)],
+      suffixOptions[Math.floor(Math.random() * suffixOptions.length)],
+    ]
+      .filter(Boolean)
+      .join(" ") || "Unnamed Card";
+
+    elements.name.textContent = defaultName;
+
+    // ADDED: Attempt to set image and artist if cardImagesData is loaded
+    console.log("Attempting to set image for type:", type);
+    if (cardImagesData && cardImagesData[type]) {
+      const typeArtists = Object.keys(cardImagesData[type]);
+      console.log("Found artists for type:", type, typeArtists);
+      if (typeArtists.length > 0) {
+        const randArtist = typeArtists[Math.floor(Math.random() * typeArtists.length)];
+        const images = cardImagesData[type][randArtist];
+        console.log("Choosing artist:", randArtist, "images:", images);
+        if (images && images.length > 0) {
+          const randImage = images[Math.floor(Math.random() * images.length)];
+          console.log("Selected image:", randImage);
+          elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+          encounteredArtists.add(randArtist);
+          updateArtistList();
+        } else {
+          console.log("No images found for artist:", randArtist, "in type:", type);
+        }
+      } else {
+        console.log("No artists found for type:", type);
+      }
+    } else {
+      console.log("No cardImagesData for type:", type);
+    }
+  };
+
+  function updateArtistList() {
+    if (encounteredArtists.size > 0) {
+      artistListDiv.textContent = "Artist(s): " + Array.from(encounteredArtists).join(", ");
+    } else {
+      artistListDiv.textContent = "";
+    }
+  }
+
+  const toggleCardSelection = (card) => {
+    if (card.classList.contains("selected")) {
+      card.classList.remove("selected");
+      selectedCard = null;
+      renameSelectedButton.disabled = true;
+    } else {
+      const previouslySelected = cardContainer.querySelector(".card.selected");
+      if (previouslySelected) previouslySelected.classList.remove("selected");
+      card.classList.add("selected");
+      selectedCard = card;
+      renameSelectedButton.disabled = false;
+    }
+  };
+
+  const populateRenameOptions = () => {
+    if (!selectedCard) return;
+
+    const prefixOptions = JSON.parse(selectedCard.dataset.prefixOptions);
+    const rootOptions = JSON.parse(selectedCard.dataset.rootOptions);
+    const suffixOptions = JSON.parse(selectedCard.dataset.suffixOptions);
+
+    populateDropdown(prefixDropdown, prefixOptions, true);
+    populateDropdown(rootDropdown, rootOptions, false);
+    populateDropdown(suffixDropdown, suffixOptions, true);
+
+    const newName = [
+      prefixOptions[Math.floor(Math.random() * prefixOptions.length)],
+      rootOptions[Math.floor(Math.random() * rootOptions.length)],
+      suffixOptions[Math.floor(Math.random() * suffixOptions.length)],
+    ]
+      .filter(Boolean)
+      .join(" ") || "Unnamed Card";
+
+    selectedCard.querySelector(".card-name").textContent = newName;
+  };
+
+  const populateDropdown = (dropdown, options, allowBlank) => {
+    dropdown.innerHTML = "";
+    if (allowBlank) {
+      const blankOption = document.createElement("option");
+      blankOption.value = "";
+      blankOption.textContent = "None";
+      dropdown.appendChild(blankOption);
+    }
+
+    options.forEach((option) => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option;
+      optionElement.textContent = option;
+      dropdown.appendChild(optionElement);
+    });
+  };
+
+  const handleConfirmName = () => {
+    if (!selectedCard) return;
+
+    const chosenPrefix = prefixDropdown.value;
+    const chosenRoot = rootDropdown.value;
+    const chosenSuffix = suffixDropdown.value;
+
+    const newName = [chosenPrefix, chosenRoot, chosenSuffix]
+      .filter(Boolean)
+      .join(" ") || "Unnamed Card";
+
+    selectedCard.querySelector(".card-name").textContent = newName;
+
+    renameModal.style.display = "none";
+    selectedCard.classList.remove("selected");
+    selectedCard = null;
+    renameSelectedButton.disabled = true;
+  };
+
+  const handleCloseModal = () => {
+    if (selectedCard) {
+      selectedCard.classList.remove("selected");
+      selectedCard = null;
+      renameSelectedButton.disabled = true;
+    }
+    renameModal.style.display = "none";
+  };
+
+  const handleOutsideClick = (event) => {
+    if (event.target === renameModal) {
+      handleCloseModal();
+    }
+  };
+
+  // ADDED: Disable generation until cardImages.json is loaded
   generateButton.disabled = true;
   generatePackButton.disabled = true;
 
@@ -386,14 +550,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load cardImages.json:", err);
   }
 
-  // Now enable generation
+  // Now that images are loaded, enable generation
   generateButton.disabled = false;
   generatePackButton.disabled = false;
 
   generateButton.addEventListener("click", generateCard);
   generatePackButton.addEventListener("click", () => generatePack(5));
   renameSelectedButton.addEventListener("click", () => {
-    if (window.selectedCard) {
+    if (selectedCard) {
       populateRenameOptions();
       renameModal.style.display = "block";
     }
