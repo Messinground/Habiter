@@ -88,30 +88,8 @@ let cardImagesData = null;
 let encounteredArtists = new Set();
 const artistListDiv = document.getElementById("artist-list");
 
-// Define generateCard and generatePack before DOMContentLoaded so they exist when event listeners are attached
-const generateCard = () => {
-  const card = createCardElement();
-  finalizeCardAttributes(card);
-  cardContainer.appendChild(card);
-};
-
-const generatePack = (count = 5) => {
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < count; i++) {
-    const card = createCardElement();
-    fragment.appendChild(card);
-  }
-  cardContainer.appendChild(fragment);
-
-  const newCards = cardContainer.querySelectorAll(".card:not([data-generated])");
-  newCards.forEach((card) => {
-    card.dataset.generated = "true";
-    finalizeCardAttributes(card);
-  });
-};
-
 // ======================================
-// End of Trading Card Data Configuration
+// Helper Functions and Event Listeners
 // ======================================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -172,12 +150,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const generateCost = () => {
     const { min, max } = cardData.costRange;
     const cost = generateMiddlePeakNumber(min, max);
-    // Cost point system:
-    // 0 cost = +4 points
-    // 1 cost = +2 points
-    // 2 cost = 0 points
-    // 3 cost = -2 points
-    // 4 cost = -4 points
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { cost, pointValue: costPointMap[cost] };
   };
@@ -189,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return { abilityCost, pointValue: costPointMap[abilityCost] };
   };
 
-  // Generates a biased random number between a and b using exponential decay
+  // Generates a biased random number between a and b using exponential decay (for energy)
   const generateBiasedRandom = (a, b) => {
     const c = a + 0.2 * (b - a);
     const targetProbability = 0.7;
@@ -201,7 +173,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const generateHP = () => {
     const { min, max } = cardData.hpRange;
     const hp = generateMiddlePeakNumber(min, max);
-
     const range = max - min;
     const firstThreshold = min + range * 0.2; 
     const secondThreshold = min + range * 0.6; 
@@ -253,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
   };
 
-  const createCardElement = () => {
+  const createCardElement = () => { // <-- createCardElement defined BEFORE generateCard so no error occurs
     const card = document.createElement("article");
     card.classList.add("card");
     card.innerHTML = `
@@ -274,7 +245,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return card;
   };
 
-  // We have already defined generateCard and generatePack above.
+  // NOTE: generateCard and generatePack defined BEFORE final lines, no lines removed
+  // They reference createCardElement and finalizeCardAttributes which exist now.
 
   const finalizeCardAttributes = (card) => {
     const elements = {
@@ -337,7 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       attributes.energy = energyData.energy;
       totalPoints += energyData.pointValue;
 
-      // Generate AbilityCost if needed
+      // Generate AbilityCost if needed:
       if (!attributes.isPassive && type !== "Consumable" && !exclude.includes("AbilityCost")) {
         const abilityCostData = generateAbilityCost();
         attributes.abilityCost = abilityCostData.abilityCost;
@@ -348,13 +320,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } while (totalPoints < MIN_POINTS || totalPoints > MAX_POINTS);
 
-    // Now adjust the displayed text:
     let finalAbilityText = attributes.abilityDesc;
 
     if (attributes.isPassive) {
       if (type === "Consumable") {
         finalAbilityText = "This turn only: " + finalAbilityText;
-      }
+      } 
     } else {
       if (type !== "Consumable" && attributes.abilityCost !== null) {
         finalAbilityText = `${attributes.abilityCost}⚡ ${finalAbilityText}`;
@@ -393,12 +364,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       elements.energy.style.display = "none";
     }
 
-    // Combine 'All' with the type-specific arrays
     const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
     const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
     const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
 
-    // Now pick 3 random elements from each combined array
     const prefixOptions = getRandomElements(combinedPrefixOptions, 3);
     const rootOptions = getRandomElements(combinedRootOptions, 3);
     const suffixOptions = getRandomElements(combinedSuffixOptions, 3);
