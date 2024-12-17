@@ -86,7 +86,8 @@ const cardData = {
 // ADDED: Global variables for images and artists
 let cardImagesData = null;
 let encounteredArtists = new Set();
-const artistListDiv = document.getElementById("artist-list");
+// Move artistListDiv inside DOMContentLoaded to ensure the element exists
+// const artistListDiv = document.getElementById("artist-list"); // Removed from global scope
 
 // ======================================
 // Helper Functions and Event Listeners
@@ -103,6 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rootDropdown = document.getElementById("root-dropdown");
   const suffixDropdown = document.getElementById("suffix-dropdown");
   const confirmNameButton = document.getElementById("confirm-name-button");
+  const artistListDiv = document.getElementById("artist-list"); // Moved inside
 
   let selectedCard = null; // Reference to the card being renamed
 
@@ -224,7 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
   };
 
-  const createCardElement = () => { // <-- createCardElement defined BEFORE generateCard so no error occurs
+  const createCardElement = () => {
     const card = document.createElement("article");
     card.classList.add("card");
     card.innerHTML = `
@@ -245,8 +247,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     return card;
   };
 
-  // NOTE: generateCard and generatePack defined BEFORE final lines, no lines removed
-  // They reference createCardElement and finalizeCardAttributes which exist now.
+  const generateCard = () => {
+    const card = createCardElement();
+    finalizeCardAttributes(card);
+    cardContainer.appendChild(card);
+  };
+
+  const generatePack = (count = 5) => {
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+      const card = createCardElement();
+      fragment.appendChild(card);
+    }
+    cardContainer.appendChild(fragment);
+
+    const newCards = cardContainer.querySelectorAll(".card:not([data-generated])");
+    newCards.forEach((card) => {
+      card.dataset.generated = "true";
+      finalizeCardAttributes(card);
+    });
+  };
 
   const finalizeCardAttributes = (card) => {
     const elements = {
