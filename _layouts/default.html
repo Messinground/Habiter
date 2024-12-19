@@ -9,11 +9,17 @@
   
   <!-- Firebase SDKs -->
   <!-- Include Firebase in the head section -->
-  <!-- Step 1: Include Firebase JavaScript SDK -->
+  <!-- Step 1: Include Firebase JavaScript SDK 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <!-- Include other Firebase products as needed -->
+	
+  <!-- Google Apis -->
+	<script async defer src="https://apis.google.com/js/api.js"></script>
+  <!-- Misc JS for every page -->
+	<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+  <!-- -->
 </head>
 <body>
   {% include navbar.html %}
@@ -33,7 +39,8 @@
 
   {% include footer.html %}
 
-  <!-- Initialize Firebase -->
+  <!-- Initialize Firebase
   <script src="{{ '/firebase-init.js' | relative_url }}"></script>
+  <!-- This line helps disable Firebase for now -->
 </body>
 </html>
