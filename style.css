@@ -38,6 +38,8 @@ nav ul {
 
 nav li {
     position: relative;
+	display: flex;
+	align-items: center;
 }
 
 nav a {
