@@ -8,14 +8,18 @@
     {% endfor %}
 
     <li id="statusContainer">
-      <span id="statusMessage">Signed out.</span>
+      <!-- Status message with a bit of spacing at the end -->
+      <span id="statusMessage" style="margin-right: 10px;">Signed out.</span>
+		
       <!-- GIS onload div -->
       <div id="g_id_onload"
 		 data-client_id="174513512206-jh0l34tmq7bc4p9it8ihjj066jp9fen3.apps.googleusercontent.com"
            data-login_uri="https://messinground.github.io"
            data-auto_prompt="false"
+           data-auto_select="false"
            data-callback="handleCredentialResponse">
       </div>
+		
       <!-- GIS sign-in button -->
       <div class="g_id_signin"
            data-type="standard"
@@ -25,8 +29,9 @@
            data-shape="rectangular"
            data-logo_alignment="left">
       </div>
-      <!-- Sign out button will be controlled by JS -->
-      <button id="signOutBtn" style="display:none;" onclick="handleSignOutClick()">Sign Out</button>
+		
+      <!-- Sign out button (initially hidden) -->
+      <button id="signOutBtn" style="display:none; margin-left:10px;" onclick="handleSignOutClick()">Sign Out</button>
     </li>
 
   </ul>
