@@ -13,7 +13,7 @@ function handleCredentialResponse(response) {
   idToken = response.credential;
   const payload = decodeJwtResponse(idToken);
   const userName = payload.name || payload.email;
-  console.log("Signed in as:", userName);
+  console.log("Signed in as:", userName,"  ");
 
   // Now request the access token
   tokenClient.requestAccessToken({ prompt: '' });
@@ -74,13 +74,16 @@ function handleSignOutClick() {
   accessToken = null;
   gapi.client.setToken(null);
 
-  // Show the Google Sign-In button again
+  // Disable auto select so that next load doesn't show the user's name automatically
+  google.accounts.id.disableAutoSelect();
+
+  // Show the sign-in button again
   const signInButtonDiv = document.querySelector('.g_id_signin');
   if (signInButtonDiv) {
     signInButtonDiv.style.display = 'block';
   }
 
-  // Clear the auth buttons content
+  // Clear the UI
   const authButtons = document.getElementById('authButtons');
   if (authButtons) {
     authButtons.innerHTML = '';
@@ -88,6 +91,7 @@ function handleSignOutClick() {
 
   console.log("User signed out");
 }
+
 
 // Initialize gapi client after DOM loads
 document.addEventListener('DOMContentLoaded', () => {
