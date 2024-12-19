@@ -1,57 +1,66 @@
 // Cloudstuff.js
+// 
+// Cloudstuff.js
 
-// Scopes for the APIs you want to access
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/tasks';
 
-let tokenClient;
 let idToken = null;
 let accessToken = null;
+let tokenClient;
 
-
-// Called by GIS after the user signs in
-function handleCredentialResponse(response) {
-  idToken = response.credential;
-  const payload = decodeJwtResponse(idToken);
-  const userName = payload.name || payload.email;
-  console.log("Signed in as:", userName,"  ");
-
-  // Now request the access token
-  tokenClient.requestAccessToken({ prompt: '' });
-
-  // Update UI to reflect signed in user as soon as we have the ID token
-  showSignedInUI(userName);
-}
-window.handleCredentialResponse = handleCredentialResponse; // Make sure this is global
-
+/**
+ * Decodes the given ID token (JWT) to extract user info.
+ * @param {string} token The ID token returned by GIS.
+ * @returns {Object} The decoded JWT payload (user info).
+ */
 function decodeJwtResponse(token) {
   const payload = JSON.parse(atob(token.split('.')[1]));
   return payload;
 }
 
-function showSignedInUI(userName) {
-  // Hide the Google Sign-In button
-  const signInButtonDiv = document.querySelector('.g_id_signin');
-  if (signInButtonDiv) {
-    signInButtonDiv.style.display = 'none';
-  }
+/**
+ * Called by GIS when the user signs in successfully.
+ * Receives an ID token that identifies the user.
+ * We then request an access token for API calls and update the UI.
+ */
+function handleCredentialResponse(response) {
+  idToken = response.credential;
+  const payload = decodeJwtResponse(idToken);
+  const userName = payload.name || payload.email;
+  console.log("Signed in as:", userName);
 
-  // Show user info and sign-out button
-  const authButtons = document.getElementById('authButtons');
-  if (authButtons) {
-    authButtons.innerHTML = `
-      <span>Signed in as ${userName}</span>
-      <button onclick="handleSignOutClick()">Sign Out</button>
-    `;
+  // Update the UI to reflect that the app now considers them signed in
+  updateStatusMessage(`Signed in as ${userName}!`);
+
+  // Request an access token for the desired APIs
+  tokenClient.requestAccessToken({ prompt: '' });
+
+  // Show the sign-out button
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) {
+    signOutBtn.style.display = 'inline-block';
+  }
+}
+window.handleCredentialResponse = handleCredentialResponse; // Ensure it's accessible globally
+
+/**
+ * Updates the status message text to reflect signed-in or signed-out state.
+ * @param {string} message The message to display.
+ */
+function updateStatusMessage(message) {
+  const statusMsg = document.getElementById('statusMessage');
+  if (statusMsg) {
+    statusMsg.textContent = message;
   }
 }
 
-
+/**
+ * Initializes the GAPI client, needed to call Google APIs like Drive/Tasks.
+ * After initialization, sets up the token client for obtaining access tokens.
+ */
 function initGapiClient() {
-  // Initialize the gapi client (not auth2)
   return gapi.client.init({}).then(() => {
     console.log('GAPI client initialized');
-
-    // Initialize OAuth token client for access tokens
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: '174513512206-jh0l34tmq7bc4p9it8ihjj066jp9fen3.apps.googleusercontent.com',
       scope: SCOPES,
@@ -63,37 +72,34 @@ function initGapiClient() {
         accessToken = tokenResponse.access_token;
         gapi.client.setToken({ access_token: accessToken });
         console.log("Access token acquired:", accessToken);
-        updateSigninStatus(true);
+        // At this point, you can call Google APIs (Drive, Tasks) using gapi.client.
       },
     });
   });
 }
 
+/**
+ * Handles sign-out logic:
+ * - Clears tokens
+ * - Updates UI to "Signed out."
+ * - Hides the sign-out button
+ */
 function handleSignOutClick() {
   idToken = null;
   accessToken = null;
   gapi.client.setToken(null);
 
-  // Disable auto select so that next load doesn't show the user's name automatically
-  google.accounts.id.disableAutoSelect();
+  updateStatusMessage("Signed out.");
 
-  // Show the sign-in button again
-  const signInButtonDiv = document.querySelector('.g_id_signin');
-  if (signInButtonDiv) {
-    signInButtonDiv.style.display = 'block';
-  }
-
-  // Clear the UI
-  const authButtons = document.getElementById('authButtons');
-  if (authButtons) {
-    authButtons.innerHTML = '';
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) {
+    signOutBtn.style.display = 'none';
   }
 
   console.log("User signed out");
 }
 
-
-// Initialize gapi client after DOM loads
+// Initialize the GAPI client once the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   gapi.load('client', initGapiClient);
 });
