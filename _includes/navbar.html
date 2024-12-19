@@ -1,3 +1,4 @@
+<!-- _includes/navbar.html -->
 <nav>
   <ul>
     {% for page in site.pages %}
@@ -5,15 +6,27 @@
         <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
       {% endif %}
     {% endfor %}
-	  
+
     <li>
-      <!-- This button calls a function defined in main.js -->
-      <button onclick="handleSignInClick()">Sign In</button>
+      <!-- Google Identity Services "onload" and sign-in button containers -->
+      <div id="g_id_onload"
+           data-client_id="174513512206-jh0l34tmq7bc4p9it8ihjj066jp9fen3.apps.googleusercontent.com"
+           data-login_uri="https://messinground.github.io"
+           data-auto_prompt="false"
+           data-callback="handleCredentialResponse">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="signin_with"
+           data-shape="rectangular"
+           data-logo_alignment="left">
+      </div>
     </li>
-	  
-	<li id="authButtons">
-  	<!-- Auth buttons will be inserted here by JS -->
-	</li>
-	  
+
+    <li id="authButtons">
+      <!-- Sign Out button will be injected by JS once signed in -->
+    </li>
   </ul>
 </nav>

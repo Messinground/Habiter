@@ -1,13 +1,12 @@
 <!-- _layouts/default.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>{{ page.title | default: "Your Website" }}</title>
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
-  
-  <!-- Firebase SDKs -->
+
+  <!-- Firebase SDKs (ignore this for now)-->
   <!-- Include Firebase in the head section -->
   <!-- Step 1: Include Firebase JavaScript SDK 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
@@ -15,11 +14,14 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <!-- Include other Firebase products as needed -->
 	
-  <!-- Google Apis -->
-	<script src="https://apis.google.com/js/api.js"></script>
-  <!-- Misc JS for every page -->
-	<script src="{{ '/assets/js/Cloudstuff.js' | relative_url }}"></script>
-  <!-- -->
+  <!-- New GIS script -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <!-- Google API for gapi.client -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  
+  <!-- Your JavaScript -->
+  <script src="{{ '/assets/js/Cloudstuff.js' | relative_url }}"></script>
 </head>
 <body>
   {% include navbar.html %}
@@ -31,16 +33,11 @@
 
     {% if page.interactive_tool_content %}
     <div class="section">
-      <!-- Interactive tool container -->
       {{ page.interactive_tool_content }}
     </div>
     {% endif %}
   </div>
 
   {% include footer.html %}
-
-  <!-- Initialize Firebase
-  <script src="{{ '/firebase-init.js' | relative_url }}"></script>
-  <!-- This line helps disable Firebase for now -->
 </body>
 </html>
