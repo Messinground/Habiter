@@ -39,3 +39,21 @@ All the generative code is in Cardlocker.js
 If you ever add more images for cards:
 Open a terminal in the root folder and type in "Python generate_image_json.py"
 This will automatically update the list of pictures in cardImages.json, which Cardlocker.js uses to find every picture and artist.
+
+----------------------------------
+Google Drive
+----------------------------------
+
+I'm using Google Cloud to connect to user's Drive and Tasks account.
+Authorized redirect URIs (the page that receives authentication) is set to https://messinground.github.io/Habiter/oauthcallback
+You can find the credentials page: https://console.cloud.google.com/apis/credentials?project=habiter-445219
+
+
+----------------------------------
+To-Do
+----------------------------------
+To push my Google Cloud to production - might need to do the following to get verified (OAuth consent screen)
+An official link to your app's Privacy Policy
+A YouTube video showing how you plan to use the Google user data you get from scopes
+A written explanation telling Google why you need access to sensitive and/or restricted user data
+All your domains verified in Google Search Console
