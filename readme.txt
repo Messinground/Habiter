@@ -34,26 +34,25 @@ This is the ONLY WAY to test the layout AND the image-part of the generator. It 
 ----------------------------------
 Functionality
 ----------------------------------
-All the generative code is in Cardlocker.js
+All the generative code for cards is in Cardlocker.js
 
 If you ever add more images for cards:
 Open a terminal in the root folder and type in "Python generate_image_json.py"
 This will automatically update the list of pictures in cardImages.json, which Cardlocker.js uses to find every picture and artist.
 
 ----------------------------------
-Google Drive
+Save/load
 ----------------------------------
 
-I'm using Google Cloud to connect to user's Drive and Tasks account.
-Authorized redirect URIs (the page that receives authentication) is set to https://messinground.github.io/Habiter/oauthcallback
-You can find the credentials page: https://console.cloud.google.com/apis/credentials?project=habiter-445219
+There is a button to save/load data on the browser or via save-file. The logic for this is all contained within site.js and is referenced by the default.html layout.
 
 
 ----------------------------------
 To-Do
 ----------------------------------
-To push my Google Cloud to production - might need to do the following to get verified (OAuth consent screen)
-An official link to your app's Privacy Policy
-A YouTube video showing how you plan to use the Google user data you get from scopes
-A written explanation telling Google why you need access to sensitive and/or restricted user data
-All your domains verified in Google Search Console
+Make it save actual data
+Clean up the CSS bc chatgpt 100% made a mess of it
+Figure out whether you have redundant @media max-width 600px stuff
+Infinite looping for the carousel
+Swipe support on mobile devices
+Pagination indicators for the carousel

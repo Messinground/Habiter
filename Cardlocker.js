@@ -409,6 +409,64 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   };
 
+  // ============= Carousel management =============
+  const cardContainer = document.getElementById("card-container");
+  const prevCardButton = document.getElementById("prev-card-button");
+  const nextCardButton = document.getElementById("next-card-button");
+
+  let currentCardIndex = 0;
+
+  // Update carousel display function
+  function updateCarousel() {
+    const cards = cardContainer.querySelectorAll(".card");
+    if (cards.length > 0) {
+      // Ensure currentCardIndex is within bounds
+      if (currentCardIndex < 0) currentCardIndex = 0;
+      if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
+
+      // Calculate transform to shift the container
+      const cardWidth = cards[0].offsetWidth;
+      const offset = -currentCardIndex * cardWidth;
+      cardContainer.style.transform = `translateX(${offset}px)`;
+    }
+  }
+
+  prevCardButton.addEventListener("click", () => {
+    currentCardIndex--;
+    updateCarousel();
+  });
+
+  nextCardButton.addEventListener("click", () => {
+    currentCardIndex++;
+    updateCarousel();
+  });
+	
+ // Modify generateCard and generatePack to reset carousel when new cards are added
+  const originalGenerateCard = generateCard;
+  function generateCardWrapper() {
+    originalGenerateCard();
+    currentCardIndex = cardContainer.children.length - 1; // Move to the latest card
+    updateCarousel();
+  }
+
+  const originalGeneratePack = generatePack;
+  function generatePackWrapper(count) {
+    originalGeneratePack(count);
+    currentCardIndex = cardContainer.children.length - 1; // Move to the latest card
+    updateCarousel();
+  }
+
+  // Override event listeners
+  generateButton.removeEventListener("click", generateCard);
+  generateButton.addEventListener("click", generateCardWrapper);
+
+  generatePackButton.removeEventListener("click", () => generatePack(5));
+  generatePackButton.addEventListener("click", () => generatePackWrapper(5));
+
+  // Initialize carousel if there are existing cards (e.g., loaded from storage)
+  updateCarousel();
+
+
   // ============= Initialization =============
 
   // Disable generation until cardImages.json is loaded
