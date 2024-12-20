@@ -1,24 +1,9 @@
-<!-- _layouts/default.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>{{ page.title | default: "Your Website" }}</title>
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
-
-  <!-- Firebase SDKs (ignore this for now)-->
-  <!-- Include Firebase in the head section -->
-  <!-- Step 1: Include Firebase JavaScript SDK 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <!-- Include other Firebase products as needed -->
-	
-  <!-- New GIS script -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  
-  <!-- Google API for gapi.client -->
-  <script src="https://apis.google.com/js/api.js"></script>
   
   <!-- Your JavaScript -->
   <script src="{{ '/assets/js/Cloudstuff.js' | relative_url }}"></script>
