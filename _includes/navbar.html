@@ -5,5 +5,23 @@
         <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
       {% endif %}
     {% endfor %}
+    <li style="margin-left: 20px;">
+      <button id="save-data-button">Save Data</button>
+      <button id="load-data-button">Load Data</button>
+      <input type="file" id="load-data-file-input" accept=".json" style="display:none;" />
+    </li>
   </ul>
 </nav>
+
+<!-- Modular div for saving/loading options -->
+<div id="save-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-save-modal" style="float:right;cursor:pointer;">&times;</span>
+    <h2>Save Your Data</h2>
+    <p>You can save your data in two ways:</p>
+    <button id="save-local-button">Save to Browser Storage</button>
+    <p style="font-size:0.9em;color:red;">Warning: Clearing cookies/site data may remove your saved data.</p>
+    <hr />
+    <button id="download-save-button">Download Save File (JSON)</button>
+  </div>
+</div>

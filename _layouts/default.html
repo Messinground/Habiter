@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ page.title | default: "Your Website" }}</title>
+	
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
-  
-  <!-- Your JavaScript -->
-  <script src="{{ '/assets/js/Cloudstuff.js' | relative_url }}"></script>
+	
+  <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
+
 </head>
 <body>
   {% include navbar.html %}
@@ -24,5 +25,8 @@
   </div>
 
   {% include footer.html %}
+	
 </body>
+	
+
 </html>
