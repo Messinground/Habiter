@@ -53,6 +53,7 @@ To-Do
 Make it save actual data
 Clean up the CSS bc chatgpt 100% made a mess of it
 Figure out whether you have redundant @media max-width 600px stuff
+Make the carousel work - like at all. Right now we just have two pointless left/right buttons.
 Infinite looping for the carousel
 Swipe support on mobile devices
 Pagination indicators for the carousel
