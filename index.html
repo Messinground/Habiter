@@ -6,43 +6,27 @@ interactive_tool_content: |
     <!-- Your interactive tool code goes here -->
     <p>This is my interactive tool!</p>
   </div>
---- 
+---
 <!-- ___________________________ --> 
 <!-- Your page content goes here --> 
 <!-- ___________________________ -->
 
-  <header>
-    <h1>Trading Card Generator</h1>
-  </header>
+<header>
+  <h1>Trading Card Generator</h1>
+</header>
 
- <main>
+<main>
   <div id="artist-list"></div>
-  <div id="buttons-container" style="text-align: center; margin: 20px 0;">
-      <button id="generate-button">Generate Trading Card</button>
-      <button id="generate-pack-button">Generate Pack (5 Cards)</button>
-      <button id="rename-selected-button" disabled>Rename Selected Card</button>
-    </div>
-  <section id="card-container"> 
-      <!-- Cards will be dynamically inserted here --> 
-    </section>
   
-  <!-- Rename Modal -->
-  <div id="rename-modal" class="modal" style="display: none;">
-      <div class="modal-content"> <span class="close-button">&times;</span>
-      <h2>Rename Card</h2>
-      <label for="prefix-dropdown">Prefix:</label>
-      <select id="prefix-dropdown">
-        </select>
-      <label for="root-dropdown">Root:</label>
-      <select id="root-dropdown">
-        </select>
-      <label for="suffix-dropdown">Suffix:</label>
-      <select id="suffix-dropdown">
-        </select>
-      <button id="confirm-name-button">Confirm Name</button>
-    </div>
-    </div>
+  <div id="buttons-container" style="text-align: center; margin: 20px 0;">
+    <button id="generate-button">Generate Trading Card</button>
+    <button id="generate-pack-button">Generate Pack (5 Cards)</button>
+  </div>
+  
+  <section id="card-container"> 
+    <!-- Cards will be dynamically inserted here --> 
+  </section>
 </main>
 
 <!-- External JavaScript file --> 
-<script src="Cardlocker.js"></script> 
+<script src="Cardlocker.js"></script>
