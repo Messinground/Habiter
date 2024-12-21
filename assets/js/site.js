@@ -35,13 +35,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+
+  // Modify saveUserDataLocally function
   function saveUserDataLocally(data) {
-    localStorage.setItem("userData", JSON.stringify(data));
+    try {
+      const hasSpace = checkStorageLimit(data);
+      localStorage.setItem("userData", JSON.stringify(data));
+      
+      if (!hasSpace) {
+        alert("Warning: Local storage is getting full. Consider downloading your data as a backup.");
+      }
+    } catch (e) {
+      alert(e.message);
+      // Offer to download instead
+      if (confirm("Would you like to download your data as a file instead?")) {
+        downloadSaveButton.click();
+      }
+    }
   }
 
   function loadUserDataLocally() {
     const json = localStorage.getItem("userData");
     return json ? JSON.parse(json) : null;
+  }
+
+  // Storage limit checks
+  function checkStorageLimit(data) {
+    // Check available space (most browsers limit to ~5MB)
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    
+    // Get current localStorage usage
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += localStorage[key].length * 2; // Multiply by 2 for UTF-16 encoding
+      }
+    }
+    
+    // Calculate size of new data
+    const newDataSize = JSON.stringify(data).length * 2;
+    
+    // Check if adding new data would exceed limit
+    if (totalSize + newDataSize > MAX_SIZE) {
+      const remaining = Math.floor((MAX_SIZE - totalSize) / (1024 * 1024));
+      throw new Error(`Cannot save: Storage limit reached. You have approximately ${remaining}MB remaining.`);
+    }
+    
+    // If more than 80% full, warn user
+    if (totalSize + newDataSize > MAX_SIZE * 0.8) {
+      console.warn(`Storage is getting full: ${Math.floor((totalSize + newDataSize) / (MAX_SIZE) * 100)}% used`);
+      return false;
+    }
+    
+    return true;
   }
 
   // --- Event Listeners ---

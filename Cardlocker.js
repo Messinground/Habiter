@@ -225,21 +225,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   const createCardElement = () => {
     const card = document.createElement("article");
     card.classList.add("card");
+    card.setAttribute('tabindex', '0'); // Make cards focusable
+    card.setAttribute('role', 'button'); // Indicate cards are clickable
     card.innerHTML = `
-      <h2 class="card-name">[Card Name]</h2>
-      <div class="card-stats">
-        <p class="card-type">[Type]</p>
-        <p class="card-cost">[Cost]</p>
+      <h2 class="card-name" id="card-name-${Date.now()}">[Card Name]</h2>
+      <div class="card-stats" aria-labelledby="card-name-${Date.now()}">
+        <p class="card-type" role="text">[Type]</p>
+        <p class="card-cost" role="text">[Cost]</p>
       </div>
-      <img class="card-art" src="placeholder.jpg" alt="Card Art">
+      <img class="card-art" src="placeholder.jpg" alt="Card illustration" aria-label="Card artwork">
       <div class="card-stats">
-        <p class="card-hp">HP: [HP]</p>
-        <p class="card-attack">Attack: [Attack Power]</p>
+        <p class="card-hp" role="text">HP: [HP]</p>
+        <p class="card-attack" role="text">Attack: [Attack Power]</p>
       </div>
-      <p class="card-abilities">[Abilities]</p>
-      <p class="card-energy">Energy: [Energy]</p>
+      <p class="card-abilities" role="text">[Abilities]</p>
+      <p class="card-energy" role="text">Energy: [Energy]</p>
     `;
     card.addEventListener("click", () => toggleCardSelection(card));
+    // Add keyboard support
+    card.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        toggleCardSelection(card);
+      }
+  });
     return card;
   };
 
@@ -380,7 +388,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         const images = cardImagesData[type][randArtist];
         if (images && images.length > 0) {
           const randImage = images[Math.floor(Math.random() * images.length)];
-          elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+          const imgPath = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+
+          // Add error handling for image loading
+          elements.img.onerror = () => {
+            console.warn(`Failed to load image: ${imgPath}`);
+            // Set a default placeholder image
+            elements.img.src = 'placeholder.jpg';
+            // Add a class to indicate failed loading
+            elements.img.classList.add('image-load-failed');
+            // Add a title to explain the issue
+            elements.img.title = 'Image failed to load';
+          };
+
+          // Add loading state
+          elements.img.classList.add('loading');
+          elements.img.onload = () => {
+            elements.img.classList.remove('loading');
+          };
+
+          elements.img.src = imgPath;
           encounteredArtists.add(randArtist);
           updateArtistList();
         }
@@ -410,7 +437,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // ============= Carousel management =============
-  const cardContainer = document.getElementById("card-container");
   const prevCardButton = document.getElementById("prev-card-button");
   const nextCardButton = document.getElementById("next-card-button");
 
