@@ -465,17 +465,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cards = Array.from(cardContainer.querySelectorAll(".card"));
     if (cards.length === 0) return;
 
+    // Log for debugging
+    console.log('Current index:', currentCardIndex);
+    console.log('Total cards:', cards.length);
+
     // Ensure currentCardIndex stays within bounds
     if (currentCardIndex < 0) currentCardIndex = 0;
     if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
 
-    // Hide all cards and show only the current one
-    cards.forEach((card, index) => {
-        card.classList.remove('active');
-        if (index === currentCardIndex) {
-            card.classList.add('active');
-        }
-    });
+    // Calculate the transform
+    const cardWidth = cards[0].offsetWidth;
+    const offset = -currentCardIndex * cardWidth;
+    
+    // Log the transform we're about to apply
+    console.log('Applying transform:', `translateX(${offset}px)`);
+    
+    // Apply the transform
+    cardContainer.style.transform = `translateX(${offset}px)`;
 
     // Update button states
     prevCardButton.disabled = currentCardIndex === 0;
