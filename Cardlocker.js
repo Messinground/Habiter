@@ -473,15 +473,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (currentCardIndex < 0) currentCardIndex = 0;
     if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
 
-    // Calculate the transform
-    const cardWidth = cards[0].offsetWidth;
-    const offset = -currentCardIndex * cardWidth;
-    
-    // Log the transform we're about to apply
-    console.log('Applying transform:', `translateX(${offset}px)`);
-    
-    // Apply the transform
-    cardContainer.style.transform = `translateX(${offset}px)`;
+    // Hide all cards and show only the current one
+    cards.forEach((card, index) => {
+        if (index === currentCardIndex) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 
     // Update button states
     prevCardButton.disabled = currentCardIndex === 0;

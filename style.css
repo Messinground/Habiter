@@ -422,7 +422,8 @@ h1 {
   overflow: hidden;
   width: 100%;
   display: flex;
-  transition: transform 0.3s ease;
+  /* Removing for v1.52:
+  transition: transform 0.3s ease;*/
 }
 
 /* Each Card in Carousel */
@@ -495,7 +496,9 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   cursor: pointer; /* Indicate that cards are clickable */
+  /* Removing for v1.52:
   transition: transform 0.2s, box-shadow 0.2s;
+  */
 }
 
 .card-name {
