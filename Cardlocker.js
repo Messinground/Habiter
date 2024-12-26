@@ -460,41 +460,54 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let currentCardIndex = 0;
 
-  // Update carousel display function
+  // Update the carousel management code
   function updateCarousel() {
-    const cards = cardContainer.querySelectorAll(".card");
-    if (cards.length > 0) {
-      // Ensure currentCardIndex is within bounds
-      if (currentCardIndex < 0) currentCardIndex = 0;
-      if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
+    const cards = Array.from(cardContainer.querySelectorAll(".card"));
+    if (cards.length === 0) return;
 
-      // Calculate transform to shift the container (one card at a time)
-      const cardWidth = cards[0].offsetWidth;
-      const offset = -currentCardIndex * cardWidth;
-      cardContainer.style.transform = `translateX(${offset}px)`;
-    }
+    // Ensure currentCardIndex stays within bounds
+    if (currentCardIndex < 0) currentCardIndex = 0;
+    if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
+
+    // Hide all cards and show only the current one
+    cards.forEach((card, index) => {
+        card.classList.remove('active');
+        if (index === currentCardIndex) {
+            card.classList.add('active');
+        }
+    });
+
+    // Update button states
+    prevCardButton.disabled = currentCardIndex === 0;
+    nextCardButton.disabled = currentCardIndex === cards.length - 1;
   }
 
+  // Update the event listeners
   prevCardButton.addEventListener("click", () => {
-    currentCardIndex--;
-    updateCarousel();
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateCarousel();
+    }
   });
 
   nextCardButton.addEventListener("click", () => {
-    currentCardIndex++;
-    updateCarousel();
+    const cards = cardContainer.querySelectorAll(".card");
+    if (currentCardIndex < cards.length - 1) {
+        currentCardIndex++;
+        updateCarousel();
+    }
   });
 
-  // Wrapper approach to reset carousel each time
+  // Update the generate wrapper functions
   function generateCardWrapper() {
     generateCard();
-    currentCardIndex = cardContainer.children.length - 1; // move to the newest card
+    currentCardIndex = cardContainer.children.length - 1;
     updateCarousel();
   }
 
   function generatePackWrapper(count = 5) {
     generatePack(count);
-    currentCardIndex = cardContainer.children.length - 1; // move to the newest card
+    currentCardIndex = cardContainer.children.length - 1;
     updateCarousel();
   }
 

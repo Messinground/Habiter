@@ -408,16 +408,21 @@ h1 {
 
 /* Carousel Container */
 .carousel-container {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
+  /* display: flex; Removing for v1.52*/
+  /* transition: transform 0.5s ease-in-out; Removing for v1.52*/
   /* Ensure the container takes the full width of the wrapper */
-  width: 100%;
+  width: 250px; /* changed from 100% for v1.52*/
+  margin: 0 auto; /* Added for v1.52*/
+  overflow: hidden; /* Added for v1.52*/
+  position: relative /* Added for v1.52*/
 }
 
 /* Hide Overflow */
 #card-container {
   overflow: hidden;
   width: 100%;
+  display: flex;
+  transition: transform 0.3s ease;
 }
 
 /* Each Card in Carousel */
@@ -453,6 +458,14 @@ h1 {
   transform: translateY(-50%) scale(1.05);
 }
 
+#prev-card-button,
+#next-card-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
 #prev-card-button {
   left: -45px; /* Position to the left of the carousel */
 }
@@ -461,10 +474,18 @@ h1 {
   right: -45px; /* Position to the right of the carousel */
 }
 
+/* Optional: Disabled state for buttons */
+#prev-card-button:disabled,
+#next-card-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .card {
   width: 250px; /* Fixed width */
   min-width: 250px; /* Ensure consistent sizing */
   height: 450px; /* Increased height to accommodate card content */
+  flex: 0 0 250px;
   border: 2px solid #000;
   background-color: #fff;
   padding: 10px;
