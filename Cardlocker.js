@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const generateMiddlePeakNumber = (min, max) => {
+    // This biases the random generation more toward the mid-range
     const mid = (min + max) / 2;
     const maxDistance = Math.floor((max - min) / 2);
     const range = Array.from({ length: max - min + 1 }, (_, i) => {
@@ -128,9 +129,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     return pickRandomWeighted(range).value;
   };
 
+  const generateBiasedRandom = (a, b) => {
+    // Weighted random skewed toward the lower end, for variety
+    const c = a + 0.2 * (b - a);
+    const targetProbability = 0.7;
+    const k = -Math.log(1 - targetProbability) / (c - a);
+    const u = Math.random();
+    return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
+  };
+
   const generateCost = () => {
     const { min, max } = cardData.costRange;
     const cost = generateMiddlePeakNumber(min, max);
+    // A small mapping of cost => pointValue
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { cost, pointValue: costPointMap[cost] };
   };
@@ -140,14 +151,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const abilityCost = generateMiddlePeakNumber(min, max);
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { abilityCost, pointValue: costPointMap[abilityCost] };
-  };
-
-  const generateBiasedRandom = (a, b) => {
-    const c = a + 0.2 * (b - a);
-    const targetProbability = 0.7;
-    const k = -Math.log(1 - targetProbability) / (c - a);
-    const u = Math.random();
-    return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
   };
 
   const generateHP = () => {
@@ -197,7 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const generateAbility = () => {
     const ability = pickRandomWeighted(cardData.abilities);
-    return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
+    return {
+      description: ability.description,
+      isPassive: ability.isPassive,
+      pointValue: ability.pointValue,
+    };
   };
 
   const toggleCardSelection = (card) => {
@@ -225,8 +232,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const createCardElement = () => {
     const card = document.createElement("article");
     card.classList.add("card");
-    card.setAttribute('tabindex', '0'); // Make cards focusable
-    card.setAttribute('role', 'button'); // Indicate cards are clickable
+    card.setAttribute("tabindex", "0"); // Make cards focusable
+    card.setAttribute("role", "button"); // Indicate cards are clickable
     card.innerHTML = `
       <h2 class="card-name" id="card-name-${Date.now()}">[Card Name]</h2>
       <div class="card-stats" aria-labelledby="card-name-${Date.now()}">
@@ -247,7 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (e.key === "Enter" || e.key === " ") {
         toggleCardSelection(card);
       }
-  });
+    });
     return card;
   };
 
@@ -368,15 +375,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Generate default card name
-    const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
-    const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
-    const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
+    const combinedPrefixOptions = [
+      ...cardData.naming.prefixes.All,
+      ...cardData.naming.prefixes[type],
+    ];
+    const combinedRootOptions = [
+      ...cardData.naming.roots.All,
+      ...cardData.naming.roots[type],
+    ];
+    const combinedSuffixOptions = [
+      ...cardData.naming.suffixes.All,
+      ...cardData.naming.suffixes[type],
+    ];
 
     const defaultName = [
       combinedPrefixOptions[Math.floor(Math.random() * combinedPrefixOptions.length)],
       combinedRootOptions[Math.floor(Math.random() * combinedRootOptions.length)],
-      combinedSuffixOptions[Math.floor(Math.random() * combinedSuffixOptions.length)]
-    ].filter(Boolean).join(" ") || "Unnamed Card";
+      combinedSuffixOptions[Math.floor(Math.random() * combinedSuffixOptions.length)],
+    ]
+      .filter(Boolean)
+      .join(" ") || "Unnamed Card";
 
     elements.name.textContent = defaultName;
 
@@ -395,9 +413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.warn(`Failed to load image: ${imgPath}`);
             // Set a default placeholder image
             elements.img.src = 'placeholder.jpg';
-            // Add a class to indicate failed loading
             elements.img.classList.add('image-load-failed');
-            // Add a title to explain the issue
             elements.img.title = 'Image failed to load';
           };
 
@@ -415,13 +431,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  const generateCard = () => {
+  // Single-card generation
+  function generateCard() {
     const card = createCardElement();
     finalizeCardAttributes(card);
     cardContainer.appendChild(card);
-  };
+  }
 
-  const generatePack = (count = 5) => {
+  // Pack (multiple) generation
+  function generatePack(count = 5) {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const card = createCardElement();
@@ -434,7 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.dataset.generated = "true";
       finalizeCardAttributes(card);
     });
-  };
+  }
 
   // ============= Carousel management =============
   const prevCardButton = document.getElementById("prev-card-button");
@@ -450,7 +468,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (currentCardIndex < 0) currentCardIndex = 0;
       if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
 
-      // Calculate transform to shift the container
+      // Calculate transform to shift the container (one card at a time)
       const cardWidth = cards[0].offsetWidth;
       const offset = -currentCardIndex * cardWidth;
       cardContainer.style.transform = `translateX(${offset}px)`;
@@ -466,36 +484,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentCardIndex++;
     updateCarousel();
   });
-	
- // Modify generateCard and generatePack to reset carousel when new cards are added
-  const originalGenerateCard = generateCard;
+
+  // Wrapper approach to reset carousel each time
   function generateCardWrapper() {
-    originalGenerateCard();
-    currentCardIndex = cardContainer.children.length - 1; // Move to the latest card
+    generateCard();
+    currentCardIndex = cardContainer.children.length - 1; // move to the newest card
     updateCarousel();
   }
 
-  const originalGeneratePack = generatePack;
-  function generatePackWrapper(count) {
-    originalGeneratePack(count);
-    currentCardIndex = cardContainer.children.length - 1; // Move to the latest card
+  function generatePackWrapper(count = 5) {
+    generatePack(count);
+    currentCardIndex = cardContainer.children.length - 1; // move to the newest card
     updateCarousel();
   }
 
-  // Override event listeners
-  generateButton.removeEventListener("click", generateCard);
+  // Attach the correct event listeners only once
   generateButton.addEventListener("click", generateCardWrapper);
-
-  generatePackButton.removeEventListener("click", () => generatePack(5));
   generatePackButton.addEventListener("click", () => generatePackWrapper(5));
 
-  // Initialize carousel if there are existing cards (e.g., loaded from storage)
+  // Initialize carousel if there are existing cards
   updateCarousel();
-
 
   // ============= Initialization =============
 
-  // Disable generation until cardImages.json is loaded
+  // Disable generation buttons until cardImages.json loads
   generateButton.disabled = true;
   generatePackButton.disabled = true;
 
@@ -506,10 +518,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load cardImages.json:", err);
   }
 
-  // Enable generation after loading images
+  // Re-enable generation after loading images
   generateButton.disabled = false;
   generatePackButton.disabled = false;
-
-  generateButton.addEventListener("click", generateCard);
-  generatePackButton.addEventListener("click", () => generatePack(5));
 });
