@@ -559,7 +559,7 @@ text-align: center;
   justify-content: space-between;
   padding: 5px 0;
   border-radius: 4px;
-  margin-bottom: 5px;
+  margin-bottom: -1.5px;
   background-color: #e9d8a263;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -571,10 +571,6 @@ text-align: center;
 .card-stats-middle {
     display:flex;
     justify-content: space-between;
-}
-
-#bottomstat {
-    flex-direction: column;
 }
 
 .card-abilities {
