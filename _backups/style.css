@@ -424,15 +424,41 @@ h1 {
   display: flex;
 }
 
-/* Each Card in Carousel */
-.carousel-container .card {
-  flex: 0 0 100%; /* Each card takes up 100% width of the container */
-  max-width: 100%;
-  /* Remove existing min-width and width to allow flexibility */
-  margin: 0;
-  background-image: url('assets/images/parchment.jpeg');
-  background-size: cover; /* Ensure the texture covers the entire card */
-  background-repeat: no-repeat; /* Prevent repeating the texture */
+.card {
+height: 450px; /* Increased height to accommodate card content */
+margin: 0;
+flex: 0 0 280px;
+border: 2px solid #000;
+background-color:transparent;
+padding: 10px;
+box-sizing: border-box;
+border-radius: 8px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+cursor: pointer;
+position: relative;
+text-align: center;
+}
+
+/* Card Background */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #b18d5e;
+    background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
+    background-size: cover; /* Ensure the texture covers the entire card */
+    z-index: 0;
+    border-radius: 8px;
+    filter: contrast(0.8);
+}
+
+/* Ensure card content is on top of card background*/
+.card > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* Carousel Navigation Buttons */
@@ -483,24 +509,6 @@ h1 {
   cursor: not-allowed;
 }
 
-.card {
-  width: 250px; /* Fixed width */
-  height: 450px; /* Increased height to accommodate card content */
-  margin: 0;
-  flex: 0 0 250px; /* if it looks weird, try 0 0 100% */
-  background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
-  background-size: cover; /* Ensure the texture covers the entire card */
-  background-color: #b18d5e;
-  border: 2px solid #000;
-  padding: 10px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-}
-
 .card-name {
   line-height: 1.2em; 
   height: 2.4em; /* Fixed height for two lines */
@@ -526,7 +534,14 @@ h1 {
 .card h2 {
   margin: 5px 0;
   font-size: 1.2em;
-  color: #2c3e50;
+  color: #f5e6be;
+  text-shadow:
+    -0.5px 0.5px 0 #000,  
+     0.5px 0.5px 0 #000,
+    -0.5px  0.5px 0 #000,
+     0.5px  0.5px 0 #000,
+     4px 4px 4px rgba(0, 0, 0, 0.4); /* Creates a drop shadow */
+  
 }
 
 .card-art {
@@ -539,9 +554,26 @@ h1 {
 }
 
 .card-stats {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 2px 5px 2px 5px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    background-color: #e9d8a263;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+.card-stats-top,
+.card-stats-middle  {
+    display:flex;
+    justify-content: space-between
+}
+
+.card-cost,
+.card-attack {
+flex-grow: 1;
+text-align: right;
 }
 
 .card-abilities {
@@ -633,7 +665,7 @@ h1 {
     background-color: #219150;
 }
 
-/* Responsive Design */
+/* Responsive Design 
 @media (max-width: 1200px) {
     .card {
         width: 220px;
@@ -668,7 +700,7 @@ h1 {
 
 @media (max-width: 600px) {
   .carousel-wrapper {
-    max-width: 250px; /* Adjust for smaller screens */
+    max-width: 250px; 
   }
 
   .carousel-button {
@@ -685,3 +717,4 @@ h1 {
     right: -35px;
   }
 }
+*/
