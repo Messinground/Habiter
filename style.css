@@ -422,19 +422,42 @@ h1 {
   overflow: hidden;
   width: 100%;
   display: flex;
-  /* Removing for v1.52:
-  transition: transform 0.3s ease;*/
 }
 
-/* Each Card in Carousel */
-.carousel-container .card {
-  flex: 0 0 100%; /* Each card takes up 100% width of the container */
-  max-width: 100%;
-  /* Remove existing min-width and width to allow flexibility */
-  margin: 0;
-  background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
-  background-size: cover; /* Ensure the texture covers the entire card */
-  background-repeat: no-repeat; /* Prevent repeating the texture */
+.card {
+width: 250px; /* Fixed width */
+height: 450px; /* Increased height to accommodate card content */
+margin: 0;
+flex: 0 0 250px; /* if it looks weird, try 0 0 100% */
+border: 2px solid #000;
+background-color:transparent;
+padding: 10px;
+box-sizing: border-box;
+border-radius: 8px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+cursor: pointer;
+position: relative;
+text-align: center;
+}
+
+/* Card Background */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #b18d5e;
+    background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
+    background-size: cover; /* Ensure the texture covers the entire card */
+    z-index: 0;
+}
+
+/* Ensure card content is on top of card background*/
+.card > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* Carousel Navigation Buttons */
@@ -485,24 +508,6 @@ h1 {
   cursor: not-allowed;
 }
 
-.card {
-  width: 250px; /* Fixed width */
-  height: 450px; /* Increased height to accommodate card content */
-  margin: 0;
-  flex: 0 0 250px; /* if it looks weird, try 0 0 100% */
-  background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
-  background-size: cover; /* Ensure the texture covers the entire card */
-  background-color: #b18d5e;
-  border: 2px solid #000;
-  padding: 10px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
-  position: relative;
-  text-align: center;
-}
-
 .card-name {
   line-height: 1.2em; 
   height: 2.4em; /* Fixed height for two lines */
@@ -528,7 +533,7 @@ h1 {
 .card h2 {
   margin: 5px 0;
   font-size: 1.2em;
-  color: #2c3e50;
+  color: black;
 }
 
 .card-art {
@@ -544,6 +549,8 @@ h1 {
   display: flex;
   justify-content: space-between;
   padding: 5px 0;
+  background-color: #e9d8a24a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .card-abilities {
@@ -637,13 +644,8 @@ h1 {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    #card-container {
-        gap: 15px;
-    }
-
     .card {
         width: 220px;
-        min-width: 220px;
         height: 420px;
     }
 }
@@ -651,7 +653,6 @@ h1 {
 @media (max-width: 992px) {
     .card {
         width: 200px;
-        min-width: 200px;
         height: 400px;
     }
 }
@@ -659,7 +660,6 @@ h1 {
 @media (max-width: 768px) {
     .card {
         width: 180px;
-        min-width: 180px;
         height: 380px;
     }
 }
@@ -671,7 +671,6 @@ h1 {
 
     .card {
         width: 160px;
-        min-width: 160px;
         height: 360px;
     }
 }

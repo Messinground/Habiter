@@ -244,9 +244,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="card-stats">
         <p class="card-hp" role="text">HP: [HP]</p>
         <p class="card-attack" role="text">Attack: [Attack Power]</p>
+        <p class="card-abilities" role="text">[Abilities]</p>
+        <p class="card-energy" role="text">Energy: [Energy]</p>
       </div>
-      <p class="card-abilities" role="text">[Abilities]</p>
-      <p class="card-energy" role="text">Energy: [Energy]</p>
     `;
     card.addEventListener("click", () => toggleCardSelection(card));
     // Add keyboard support
