@@ -38,6 +38,8 @@ nav ul {
 
 nav li {
     position: relative;
+	display: flex;
+	align-items: center;
 }
 
 nav a {
@@ -70,6 +72,29 @@ nav li:hover > ul {
 nav li ul li a {
     padding: 10px 20px;
     font-weight: normal;
+}
+
+/* Navbar Buttons Enhancements */
+nav li button.nav-button {
+  margin-left: 10px; /* Space between Save and Load buttons */
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+nav li button.nav-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+nav li button.nav-button:active {
+  transform: translateY(0);
+  background-color: #39843c;
 }
 
 /* Footer styles */
@@ -374,18 +399,94 @@ h1 {
 /* For the card generator: */
 /* ----------------------- */
 
+/* Carousel Wrapper */
+.carousel-wrapper {
+  position: relative;
+  max-width: 300px; /* Adjust based on your card width */
+  margin: 40px auto; /* Center the carousel with some top/bottom margin */
+}
+
+/* Carousel Container */
+.carousel-container {
+  /* display: flex; Removing for v1.52*/
+  /* transition: transform 0.5s ease-in-out; Removing for v1.52*/
+  /* Ensure the container takes the full width of the wrapper */
+  width: 250px; /* changed from 100% for v1.52*/
+  margin: 0 auto; /* Added for v1.52*/
+  overflow: hidden; /* Added for v1.52*/
+  position: relative /* Added for v1.52*/
+}
+
+/* Hide Overflow */
 #card-container {
+  overflow: hidden;
+  width: 100%;
   display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping to new lines */
-  overflow-x: auto; /* Enable horizontal scrolling */
-  gap: 20px;
-  padding: 10px 0;
+  /* Removing for v1.52:
+  transition: transform 0.3s ease;*/
+}
+
+/* Each Card in Carousel */
+.carousel-container .card {
+  flex: 0 0 100%; /* Each card takes up 100% width of the container */
+  max-width: 100%;
+  /* Remove existing min-width and width to allow flexibility */
+  margin: 0;
+}
+
+/* Carousel Navigation Buttons */
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.carousel-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.05);
+}
+
+#prev-card-button,
+#next-card-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+#prev-card-button {
+  left: -45px; /* Position to the left of the carousel */
+}
+
+#next-card-button {
+  right: -45px; /* Position to the right of the carousel */
+}
+
+/* Optional: Disabled state for buttons */
+#prev-card-button:disabled,
+#next-card-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .card {
   width: 250px; /* Fixed width */
   min-width: 250px; /* Ensure consistent sizing */
   height: 450px; /* Increased height to accommodate card content */
+  flex: 0 0 250px;
   border: 2px solid #000;
   background-color: #fff;
   padding: 10px;
@@ -395,7 +496,21 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   cursor: pointer; /* Indicate that cards are clickable */
+  /* Removing for v1.52:
   transition: transform 0.2s, box-shadow 0.2s;
+  */
+}
+
+.card-name {
+  line-height: 1.2em; 
+  height: 2.4em; /* Fixed height for two lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  margin-bottom: 5px; /* Spacing below the name */
+  font-size: 1.1em; /* Optional: Adjust font size for better readability */
 }
 
 .card:hover {
@@ -557,4 +672,24 @@ h1 {
         min-width: 160px;
         height: 360px;
     }
+}
+
+@media (max-width: 600px) {
+  .carousel-wrapper {
+    max-width: 250px; /* Adjust for smaller screens */
+  }
+
+  .carousel-button {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  #prev-card-button {
+    left: -35px;
+  }
+
+  #next-card-button {
+    right: -35px;
+  }
 }

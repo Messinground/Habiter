@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const generateMiddlePeakNumber = (min, max) => {
+    // This biases the random generation more toward the mid-range
     const mid = (min + max) / 2;
     const maxDistance = Math.floor((max - min) / 2);
     const range = Array.from({ length: max - min + 1 }, (_, i) => {
@@ -128,9 +129,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     return pickRandomWeighted(range).value;
   };
 
+  const generateBiasedRandom = (a, b) => {
+    // Weighted random skewed toward the lower end, for variety
+    const c = a + 0.2 * (b - a);
+    const targetProbability = 0.7;
+    const k = -Math.log(1 - targetProbability) / (c - a);
+    const u = Math.random();
+    return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
+  };
+
   const generateCost = () => {
     const { min, max } = cardData.costRange;
     const cost = generateMiddlePeakNumber(min, max);
+    // A small mapping of cost => pointValue
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { cost, pointValue: costPointMap[cost] };
   };
@@ -140,14 +151,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const abilityCost = generateMiddlePeakNumber(min, max);
     const costPointMap = { 0: 3, 1: 1, 2: 0, 3: -1, 4: -3 };
     return { abilityCost, pointValue: costPointMap[abilityCost] };
-  };
-
-  const generateBiasedRandom = (a, b) => {
-    const c = a + 0.2 * (b - a);
-    const targetProbability = 0.7;
-    const k = -Math.log(1 - targetProbability) / (c - a);
-    const u = Math.random();
-    return a - (1 / k) * Math.log(1 - u * (1 - Math.exp(-k * (b - a))));
   };
 
   const generateHP = () => {
@@ -197,7 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const generateAbility = () => {
     const ability = pickRandomWeighted(cardData.abilities);
-    return { description: ability.description, isPassive: ability.isPassive, pointValue: ability.pointValue };
+    return {
+      description: ability.description,
+      isPassive: ability.isPassive,
+      pointValue: ability.pointValue,
+    };
   };
 
   const toggleCardSelection = (card) => {
@@ -225,21 +232,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   const createCardElement = () => {
     const card = document.createElement("article");
     card.classList.add("card");
+    card.setAttribute("tabindex", "0"); // Make cards focusable
+    card.setAttribute("role", "button"); // Indicate cards are clickable
     card.innerHTML = `
-      <h2 class="card-name">[Card Name]</h2>
-      <div class="card-stats">
-        <p class="card-type">[Type]</p>
-        <p class="card-cost">[Cost]</p>
+      <h2 class="card-name" id="card-name-${Date.now()}">[Card Name]</h2>
+      <div class="card-stats" aria-labelledby="card-name-${Date.now()}">
+        <p class="card-type" role="text">[Type]</p>
+        <p class="card-cost" role="text">[Cost]</p>
       </div>
-      <img class="card-art" src="placeholder.jpg" alt="Card Art">
+      <img class="card-art" src="placeholder.jpg" alt="Card illustration" aria-label="Card artwork">
       <div class="card-stats">
-        <p class="card-hp">HP: [HP]</p>
-        <p class="card-attack">Attack: [Attack Power]</p>
+        <p class="card-hp" role="text">HP: [HP]</p>
+        <p class="card-attack" role="text">Attack: [Attack Power]</p>
       </div>
-      <p class="card-abilities">[Abilities]</p>
-      <p class="card-energy">Energy: [Energy]</p>
+      <p class="card-abilities" role="text">[Abilities]</p>
+      <p class="card-energy" role="text">Energy: [Energy]</p>
     `;
     card.addEventListener("click", () => toggleCardSelection(card));
+    // Add keyboard support
+    card.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        toggleCardSelection(card);
+      }
+    });
     return card;
   };
 
@@ -360,15 +375,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Generate default card name
-    const combinedPrefixOptions = [...cardData.naming.prefixes.All, ...cardData.naming.prefixes[type]];
-    const combinedRootOptions = [...cardData.naming.roots.All, ...cardData.naming.roots[type]];
-    const combinedSuffixOptions = [...cardData.naming.suffixes.All, ...cardData.naming.suffixes[type]];
+    const combinedPrefixOptions = [
+      ...cardData.naming.prefixes.All,
+      ...cardData.naming.prefixes[type],
+    ];
+    const combinedRootOptions = [
+      ...cardData.naming.roots.All,
+      ...cardData.naming.roots[type],
+    ];
+    const combinedSuffixOptions = [
+      ...cardData.naming.suffixes.All,
+      ...cardData.naming.suffixes[type],
+    ];
 
     const defaultName = [
       combinedPrefixOptions[Math.floor(Math.random() * combinedPrefixOptions.length)],
       combinedRootOptions[Math.floor(Math.random() * combinedRootOptions.length)],
-      combinedSuffixOptions[Math.floor(Math.random() * combinedSuffixOptions.length)]
-    ].filter(Boolean).join(" ") || "Unnamed Card";
+      combinedSuffixOptions[Math.floor(Math.random() * combinedSuffixOptions.length)],
+    ]
+      .filter(Boolean)
+      .join(" ") || "Unnamed Card";
 
     elements.name.textContent = defaultName;
 
@@ -380,7 +406,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         const images = cardImagesData[type][randArtist];
         if (images && images.length > 0) {
           const randImage = images[Math.floor(Math.random() * images.length)];
-          elements.img.src = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+          const imgPath = `CardImages/${type}/${encodeURIComponent(randArtist)}/${encodeURIComponent(randImage)}`;
+
+          // Add error handling for image loading
+          elements.img.onerror = () => {
+            console.warn(`Failed to load image: ${imgPath}`);
+            // Set a default placeholder image
+            elements.img.src = 'placeholder.jpg';
+            elements.img.classList.add('image-load-failed');
+            elements.img.title = 'Image failed to load';
+          };
+
+          // Add loading state
+          elements.img.classList.add('loading');
+          elements.img.onload = () => {
+            elements.img.classList.remove('loading');
+          };
+
+          elements.img.src = imgPath;
           encounteredArtists.add(randArtist);
           updateArtistList();
         }
@@ -388,13 +431,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  const generateCard = () => {
+  // Single-card generation
+  function generateCard() {
     const card = createCardElement();
     finalizeCardAttributes(card);
     cardContainer.appendChild(card);
-  };
+  }
 
-  const generatePack = (count = 5) => {
+  // Pack (multiple) generation
+  function generatePack(count = 5) {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const card = createCardElement();
@@ -407,11 +452,80 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.dataset.generated = "true";
       finalizeCardAttributes(card);
     });
-  };
+  }
+
+  // ============= Carousel management =============
+  const prevCardButton = document.getElementById("prev-card-button");
+  const nextCardButton = document.getElementById("next-card-button");
+
+  let currentCardIndex = 0;
+
+  // Update the carousel management code
+  function updateCarousel() {
+    const cards = Array.from(cardContainer.querySelectorAll(".card"));
+    if (cards.length === 0) return;
+
+    // Log for debugging
+    console.log('Current index:', currentCardIndex);
+    console.log('Total cards:', cards.length);
+
+    // Ensure currentCardIndex stays within bounds
+    if (currentCardIndex < 0) currentCardIndex = 0;
+    if (currentCardIndex >= cards.length) currentCardIndex = cards.length - 1;
+
+    // Hide all cards and show only the current one
+    cards.forEach((card, index) => {
+        if (index === currentCardIndex) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // Update button states
+    prevCardButton.disabled = currentCardIndex === 0;
+    nextCardButton.disabled = currentCardIndex === cards.length - 1;
+  }
+
+  // Update the event listeners
+  prevCardButton.addEventListener("click", () => {
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateCarousel();
+    }
+  });
+
+  nextCardButton.addEventListener("click", () => {
+    const cards = cardContainer.querySelectorAll(".card");
+    if (currentCardIndex < cards.length - 1) {
+        currentCardIndex++;
+        updateCarousel();
+    }
+  });
+
+  // Update the generate wrapper functions
+  function generateCardWrapper() {
+    generateCard();
+    currentCardIndex = cardContainer.children.length - 1;
+    updateCarousel();
+  }
+
+  function generatePackWrapper(count = 5) {
+    generatePack(count);
+    currentCardIndex = cardContainer.children.length - 1;
+    updateCarousel();
+  }
+
+  // Attach the correct event listeners only once
+  generateButton.addEventListener("click", generateCardWrapper);
+  generatePackButton.addEventListener("click", () => generatePackWrapper(5));
+
+  // Initialize carousel if there are existing cards
+  updateCarousel();
 
   // ============= Initialization =============
 
-  // Disable generation until cardImages.json is loaded
+  // Disable generation buttons until cardImages.json loads
   generateButton.disabled = true;
   generatePackButton.disabled = true;
 
@@ -422,10 +536,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load cardImages.json:", err);
   }
 
-  // Enable generation after loading images
+  // Re-enable generation after loading images
   generateButton.disabled = false;
   generatePackButton.disabled = false;
-
-  generateButton.addEventListener("click", generateCard);
-  generatePackButton.addEventListener("click", () => generatePack(5));
 });

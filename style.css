@@ -432,6 +432,19 @@ h1 {
   max-width: 100%;
   /* Remove existing min-width and width to allow flexibility */
   margin: 0;
+  background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
+  background-size: cover; /* Ensure the texture covers the entire card */
+  background-repeat: no-repeat; /* Prevent repeating the texture */
+}
+
+.card-art {
+    width: 100%;
+    height: 50%; /* Adjusted to occupy half the card height */
+    background: #ddd;
+    margin-bottom: 5px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add drop-shadow */
 }
 
 /* Carousel Navigation Buttons */
