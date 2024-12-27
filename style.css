@@ -402,7 +402,7 @@ h1 {
 /* Carousel Wrapper */
 .carousel-wrapper {
   position: relative;
-  max-width: 300px; /* Adjust based on your card width */
+  max-width: 350px; /* Adjust based on your card width */
   margin: 40px auto; /* Center the carousel with some top/bottom margin */
 }
 
@@ -411,7 +411,7 @@ h1 {
   /* display: flex; Removing for v1.52*/
   /* transition: transform 0.5s ease-in-out; Removing for v1.52*/
   /* Ensure the container takes the full width of the wrapper */
-  width: 250px; /* changed from 100% for v1.52*/
+  width: 350px; /* changed from 100% for v1.52*/
   margin: 0 auto; /* Added for v1.52*/
   overflow: hidden; /* Added for v1.52*/
   position: relative /* Added for v1.52*/
@@ -427,7 +427,7 @@ h1 {
 .card {
 height: 450px; /* Increased height to accommodate card content */
 margin: 0;
-flex: 0 0 280px;
+flex: 0 0 321.4px;
 border: 2px solid #000;
 background-color:transparent;
 padding: 10px;
