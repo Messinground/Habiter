@@ -425,10 +425,9 @@ h1 {
 }
 
 .card {
-width: 250px; /* Fixed width */
 height: 450px; /* Increased height to accommodate card content */
 margin: 0;
-flex: 0 0 250px; /* if it looks weird, try 0 0 100% */
+flex: 0 0 280px;
 border: 2px solid #000;
 background-color:transparent;
 padding: 10px;
@@ -452,6 +451,8 @@ text-align: center;
     background-image: url('assets/images/parchment.jpeg'); /* Add parchment texture */
     background-size: cover; /* Ensure the texture covers the entire card */
     z-index: 0;
+    border-radius: 8px;
+    filter: contrast(0.8);
 }
 
 /* Ensure card content is on top of card background*/
@@ -533,7 +534,14 @@ text-align: center;
 .card h2 {
   margin: 5px 0;
   font-size: 1.2em;
-  color: black;
+  color: #f5e6be;
+  text-shadow:
+    -0.5px 0.5px 0 #000,  
+     0.5px 0.5px 0 #000,
+    -0.5px  0.5px 0 #000,
+     0.5px  0.5px 0 #000,
+     4px 4px 4px rgba(0, 0, 0, 0.4); /* Creates a drop shadow */
+  
 }
 
 .card-art {
@@ -547,10 +555,26 @@ text-align: center;
 
 .card-stats {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: 5px 0;
-  background-color: #e9d8a24a;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  background-color: #e9d8a263;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-stats-top {
+    display:flex;
+    justify-content: space-between;
+}
+.card-stats-middle {
+    display:flex;
+    justify-content: space-between;
+}
+
+#bottomstat {
+    flex-direction: column;
 }
 
 .card-abilities {
@@ -642,7 +666,7 @@ text-align: center;
     background-color: #219150;
 }
 
-/* Responsive Design */
+/* Responsive Design 
 @media (max-width: 1200px) {
     .card {
         width: 220px;
@@ -677,7 +701,7 @@ text-align: center;
 
 @media (max-width: 600px) {
   .carousel-wrapper {
-    max-width: 250px; /* Adjust for smaller screens */
+    max-width: 250px; 
   }
 
   .carousel-button {
@@ -694,3 +718,4 @@ text-align: center;
     right: -35px;
   }
 }
+*/
