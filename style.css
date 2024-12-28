@@ -667,15 +667,15 @@ text-align: right;
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 320px);
+    grid-template-columns: repeat(auto-fill, 250px);
     justify-content: center;
     gap: 2rem;
     padding: 1rem;
   }
   
 .gallery-card {
-    width: 320px;
-    height:448px;
+    width: 250px;
+    height:350px;
     margin: 0;
     transform-origin: center;
     transition: transform 0.2s;
@@ -696,3 +696,35 @@ text-align: right;
         aspect-ratio: 320 / 448;
     }
 }
+
+.gallery-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .gallery-nav-button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .gallery-nav-button:hover {
+    background-color: #219150;
+  }
+  
+  .gallery-nav-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  #page-indicator {
+    font-size: 1.1rem;
+    color: #666;
+  }

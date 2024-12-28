@@ -4,42 +4,220 @@ title: "Gallery"
 ---
 
 <header>
-  <h1>Card Gallery</h1>
+    <h1>Card Gallery</h1>
 </header>
 
 <main>
-  <div id="gallery-container" class="gallery-grid">
-    <!-- Cards will be displayed here -->
-  </div>
+    <div id="gallery-container" class="gallery-grid">
+        <!-- Cards will be displayed here -->
+    </div>
+    <div class="gallery-navigation">
+        <button id="prev-page" class="gallery-nav-button">&lt; Previous</button>
+        <span id="page-indicator">Page 1</span>
+        <button id="next-page" class="gallery-nav-button">Next &gt;</button>
+    </div>
 </main>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const galleryContainer = document.getElementById("gallery-container");
-  const savedCards = JSON.parse(localStorage.getItem('generatedCards') || '[]');
 
-  savedCards.forEach(cardData => {
-    const cardElement = document.createElement('article');
-    cardElement.classList.add('card', 'gallery-card');
-    cardElement.innerHTML = `
-      <h2 class="card-name">${cardData.name}</h2>
-      <div class="card-stats">
-        <div class="card-stats-top">
-          <p class="card-type">${cardData.type}</p>
-          ${cardData.cost !== null ? `<p class="card-cost">⚡ ${cardData.cost}</p>` : ''}
-        </div>
-      </div>
-      <img class="card-art" src="${cardData.imagePath}" alt="Card illustration">
-      <div class="card-stats">
-        <div class="card-stats-middle">
-          ${cardData.hp !== null ? `<p class="card-hp">❤️: ${cardData.hp}</p>` : ''}
-          ${cardData.attack !== null ? `<p class="card-attack">🗡️: ${cardData.attack}</p>` : ''}
-        </div>
-        <p class="card-abilities">${cardData.ability}</p>
-        <p class="card-energy">Energy: ${cardData.energy}</p>
-      </div>
-    `;
-    galleryContainer.appendChild(cardElement);
-  });
-});
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const galleryContainer = document.getElementById("gallery-container");
+        const prevPageBtn = document.getElementById("prev-page");
+        const nextPageBtn = document.getElementById("next-page");
+        const pageIndicator = document.getElementById("page-indicator");
+
+        const CARDS_PER_PAGE = 9;
+        let currentPage = 0;
+        const savedCards = JSON.parse(localStorage.getItem('generatedCards') || '[]');
+        const totalPages = Math.ceil(savedCards.length / CARDS_PER_PAGE);
+
+        function cardToImage(cardData) {
+            return new Promise((resolve) => {
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = `
+                    position: fixed;
+                    left: -9999px;
+                    top: 0;
+                    width: 320px;
+                    height: 448px;
+                    border: 2px solid black;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    background-color: #b18d5e;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                `;
+
+                // Apply background directly to wrapper
+                wrapper.style.backgroundImage = "url('assets/images/parchment.jpeg')";
+                wrapper.style.backgroundSize = "cover";
+
+                const content = document.createElement('div');
+                content.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    padding: 10px;
+                    position: relative;
+                    background-color: rgba(177, 141, 94, 0.3);
+                    filter: contrast(0.8);
+                    text-align: center;
+                `;
+
+                content.innerHTML = `
+                    <h2 style="
+                        line-height: 1.2em;
+                        height: 2.4em;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 2;
+                        margin: 5px 0;
+                        font-size: 1.2em;
+                        color: #f5e6be;
+                        text-shadow: -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000, 4px 4px 4px rgba(0, 0, 0, 0.4);
+                        position: relative;
+                        z-index: 2;
+                    ">${cardData.name}</h2>
+                    <div style="
+                        background-color: rgba(233, 216, 162, 0.4);
+                        padding: 2px 5px;
+                        border-radius: 4px;
+                        margin-bottom: 5px;
+                        position: relative;
+                        z-index: 2;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                        border: 1px solid rgba(0, 0, 0, 0.3);
+                    ">
+                        <div style="display:flex; justify-content:space-between">
+                            <p style="margin: 0">${cardData.type}</p>
+                            ${cardData.cost !== null ? `<p style="margin: 0">⚡ ${cardData.cost}</p>` : ''}
+                        </div>
+                    </div>
+                    <div style="
+                        text-align: center;
+                        margin: 10px auto;
+                        position: relative;
+                        z-index: 2;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                        border: 1px solid rgba(0, 0, 0, 0.3);
+                    ">
+                        <img 
+                            src="${cardData.imagePath}" 
+                            alt="Card illustration" 
+                            style="
+                                width: 75%;
+                                height: 200px;
+                                object-fit: contain;
+                                border-radius: 4px;
+                            "
+                        >
+                    </div>
+                    <div style="
+                        background-color: rgba(233, 216, 162, 0.4);
+                        padding: 5px;
+                        border-radius: 4px;
+                        position: relative;
+                        z-index: 2;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                        border: 1px solid rgba(0, 0, 0, 0.3);
+                        text-align: center;
+                    ">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+                            ${cardData.hp !== null ? `<p style="margin: 0">❤️: ${cardData.hp}</p>` : ''}
+                            ${cardData.attack !== null ? `<p style="margin: 0">🗡️: ${cardData.attack}</p>` : ''}
+                        </div>
+                        <p style="
+                            font-size: 0.9em;
+                            margin: 10px 0;
+                            text-align: center;
+                        ">
+                            ${!cardData.isPassive && cardData.type !== 'Consumable' && cardData.abilityCost !== null ?
+                                `${cardData.abilityCost}⚡ ` : ''}${cardData.ability}
+                        </p>
+                        ${cardData.energy ? `
+                            <p style="
+                                font-weight: bold;
+                                margin: 0;
+                                text-align: center;
+                            ">Energy: ${cardData.energy}</p>
+                        ` : ''}
+                    </div>
+                `;
+
+                wrapper.appendChild(content);
+                document.body.appendChild(wrapper);
+
+                html2canvas(wrapper, {
+                    width: 320,
+                    height: 448,
+                    scale: 2,
+                    backgroundColor: null,
+                    useCORS: true,
+                    onclone: (clonedDoc) => {
+                        const clonedWrapper = clonedDoc.querySelector('div');
+                        if (clonedWrapper) {
+                            clonedWrapper.style.border = '2px solid black';
+                            clonedWrapper.style.borderRadius = '8px';
+                        }
+                    }
+                }).then(canvas => {
+                    document.body.removeChild(wrapper);
+                    resolve(canvas.toDataURL('image/png', 1.0));
+                });
+            });
+        }
+
+        async function displayPage(page) {
+            galleryContainer.innerHTML = '';
+            const start = page * CARDS_PER_PAGE;
+            const end = Math.min(start + CARDS_PER_PAGE, savedCards.length);
+
+            for (let i = start; i < end; i++) {
+                const cardData = savedCards[i];
+                
+                // Pass cardData directly instead of the temporary element
+                const imageUrl = await cardToImage(cardData);
+
+                // Create gallery card container
+                const galleryCard = document.createElement('div');
+                galleryCard.classList.add('gallery-card');
+                
+                // Create and add image
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = cardData.name;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'contain';
+                
+                galleryCard.appendChild(img);
+                galleryContainer.appendChild(galleryCard);
+            }
+
+            // Update navigation
+            prevPageBtn.disabled = page === 0;
+            nextPageBtn.disabled = page >= totalPages - 1;
+            pageIndicator.textContent = `Page ${page + 1} of ${totalPages}`;
+        }
+
+        // Navigation event listeners
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                displayPage(currentPage);
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                displayPage(currentPage);
+            }
+        });
+
+        // Initial display
+        displayPage(0);
+    });
 </script>
