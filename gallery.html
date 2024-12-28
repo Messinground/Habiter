@@ -1,0 +1,45 @@
+---
+layout: default
+title: "Gallery"
+---
+
+<header>
+  <h1>Card Gallery</h1>
+</header>
+
+<main>
+  <div id="gallery-container" class="gallery-grid">
+    <!-- Cards will be displayed here -->
+  </div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const galleryContainer = document.getElementById("gallery-container");
+  const savedCards = JSON.parse(localStorage.getItem('generatedCards') || '[]');
+
+  savedCards.forEach(cardData => {
+    const cardElement = document.createElement('article');
+    cardElement.classList.add('card', 'gallery-card');
+    cardElement.innerHTML = `
+      <h2 class="card-name">${cardData.name}</h2>
+      <div class="card-stats">
+        <div class="card-stats-top">
+          <p class="card-type">${cardData.type}</p>
+          ${cardData.cost !== null ? `<p class="card-cost">⚡ ${cardData.cost}</p>` : ''}
+        </div>
+      </div>
+      <img class="card-art" src="${cardData.imagePath}" alt="Card illustration">
+      <div class="card-stats">
+        <div class="card-stats-middle">
+          ${cardData.hp !== null ? `<p class="card-hp">❤️: ${cardData.hp}</p>` : ''}
+          ${cardData.attack !== null ? `<p class="card-attack">🗡️: ${cardData.attack}</p>` : ''}
+        </div>
+        <p class="card-abilities">${cardData.ability}</p>
+        <p class="card-energy">Energy: ${cardData.energy}</p>
+      </div>
+    `;
+    galleryContainer.appendChild(cardElement);
+  });
+});
+</script>

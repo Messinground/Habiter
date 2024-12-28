@@ -84,8 +84,16 @@ const cardData = {
 // ADDED: Global variables for images and artists
 let cardImagesData = null;
 let encounteredArtists = new Set();
+let generatedCards = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Load existing cards from local storage
+  try {
+    generatedCards = JSON.parse(localStorage.getItem('generatedCards') || '[]');
+  } catch (error) {
+    console.error('Error loading saved cards:', error);
+    generatedCards = [];
+  }
   const cardContainer = document.getElementById("card-container");
   const generateButton = document.getElementById("generate-button");
   const generatePackButton = document.getElementById("generate-pack-button");
@@ -357,14 +365,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (attributes.hp !== null) {
-      elements.hp.textContent = `HP: ${attributes.hp}`;
+      elements.hp.textContent = `❤️: ${attributes.hp}`;
       elements.hp.style.display = "";
     } else {
       elements.hp.style.display = "none";
     }
 
     if (attributes.attack !== null) {
-      elements.attack.textContent = `Attack: ${attributes.attack}`;
+      elements.attack.textContent = `🗡️: ${attributes.attack}`;
       elements.attack.style.display = "";
     } else {
       elements.attack.style.display = "none";
@@ -433,7 +441,52 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
     }
+
+    // Save card data
+    saveCardData(card, attributes, type);
+
   };
+
+  // ============= Card Saving ============= //
+  function saveCardData(card, attributes, type) {
+    const cardData = {
+      name: card.querySelector(".card-name").textContent,
+      type: type,
+      cost: attributes.cost,
+      hp: attributes.hp,
+      attack: attributes.attack,
+      energy: attributes.energy,
+      ability: attributes.abilityDesc,
+      isPassive: attributes.isPassive,
+      abilityCost: attributes.abilityCost,
+      imagePath: card.querySelector(".card-art").src
+    };
+    
+    generatedCards.push(cardData);
+    saveToStorage();
+  }
+
+  function saveToStorage() {
+    localStorage.setItem('generatedCards', JSON.stringify(generatedCards));
+  }
+
+  window.getUserData = () => ({
+    cards: generatedCards
+  });
+
+  window.setUserData = (data) => {
+    generatedCards = data.cards || [];
+    // Recreate cards from saved data
+    cardContainer.innerHTML = '';
+    generatedCards.forEach(cardData => {
+      const card = createCardElement();
+      recreateCard(card, cardData);
+      cardContainer.appendChild(card);
+    });
+    updateCarousel();
+  };
+
+  // ============= Card Generation =============
 
   // Single-card generation
   function generateCard() {

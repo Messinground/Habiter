@@ -425,9 +425,9 @@ h1 {
 }
 
 .card {
-height: 450px; /* Increased height to accommodate card content */
+height: 448px; /* Increased height to accommodate card content */
 margin: 0;
-flex: 0 0 321.4px;
+flex: 0 0 320px;
 border: 2px solid #000;
 background-color:transparent;
 padding: 10px;
@@ -665,56 +665,34 @@ text-align: right;
     background-color: #219150;
 }
 
-/* Responsive Design 
-@media (max-width: 1200px) {
-    .card {
-        width: 220px;
-        height: 420px;
-    }
-}
-
-@media (max-width: 992px) {
-    .card {
-        width: 200px;
-        height: 400px;
-    }
-}
-
-@media (max-width: 768px) {
-    .card {
-        width: 180px;
-        height: 380px;
-    }
-}
-
-@media (max-width: 600px) {
-    .modal-content {
-        margin: 20% auto;
-    }
-
-    .card {
-        width: 160px;
-        height: 360px;
-    }
-}
-
-@media (max-width: 600px) {
-  .carousel-wrapper {
-    max-width: 250px; 
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 320px);
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
   }
-
-  .carousel-button {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
+  
+.gallery-card {
+    width: 320px;
+    height:448px;
+    margin: 0;
+    transform-origin: center;
+    transition: transform 0.2s;
   }
-
-  #prev-card-button {
-    left: -35px;
+  
+.gallery-card:hover {
+    transform: scale(1.05);
   }
-
-  #next-card-button {
-    right: -35px;
-  }
+  
+@media (max-width: 700px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+    }
+    
+    .gallery-card {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 320 / 448;
+    }
 }
-*/
