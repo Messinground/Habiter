@@ -468,23 +468,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function saveToStorage() {
     localStorage.setItem('generatedCards', JSON.stringify(generatedCards));
-  }
+    console.log('Saved cards to storage:', generatedCards); // Add this
+}
 
   window.getUserData = () => ({
     cards: generatedCards
   });
 
   window.setUserData = (data) => {
-    generatedCards = data.cards || [];
-    // Recreate cards from saved data
-    cardContainer.innerHTML = '';
-    generatedCards.forEach(cardData => {
-      const card = createCardElement();
-      recreateCard(card, cardData);
-      cardContainer.appendChild(card);
-    });
-    updateCarousel();
-  };
+    if (!data || !data.cards || !Array.isArray(data.cards)) {
+        console.error("Invalid data format");
+        return;
+    }
+    
+    try {
+        console.log('Setting user data:', data); // Add this
+        generatedCards = data.cards;
+        // Recreate cards from saved data
+        cardContainer.innerHTML = '';
+        generatedCards.forEach(cardData => {
+            const card = createCardElement();
+            recreateCard(card, cardData);
+            cardContainer.appendChild(card);
+        });
+        currentCardIndex = generatedCards.length - 1;
+        updateCarousel();
+        saveToStorage(); // Add this - ensures localStorage is updated when loading from file
+    } catch (error) {
+        console.error("Error loading cards:", error);
+        alert("Failed to load cards: " + error.message);
+    }
+};
 
   // ============= Card Generation =============
 

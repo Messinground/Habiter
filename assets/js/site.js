@@ -140,16 +140,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      try {
-        const parsedData = JSON.parse(e.target.result);
-        setUserData(parsedData);
-        alert("Data loaded successfully!");
-      } catch (error) {
-        alert("Failed to parse JSON file. Please make sure it's a valid JSON.");
-      }
+        try {
+            // Add debug logging
+            console.log("File contents:", e.target.result);
+            
+            const parsedData = JSON.parse(e.target.result);
+            console.log("Parsed data:", parsedData);
+            
+            // Validate data structure
+            if (!parsedData.cards || !Array.isArray(parsedData.cards)) {
+                throw new Error("Invalid save file format - missing cards array");
+            }
+            
+            setUserData(parsedData);
+            alert("Data loaded successfully!");
+        } catch (error) {
+            console.error("JSON parse error:", error);
+            alert(`Failed to parse JSON file: ${error.message}`);
+        }
+    };
+    reader.onerror = (error) => {
+        console.error("FileReader error:", error);
+        alert("Error reading file");
     };
     reader.readAsText(file);
-  });
+});
 
   // On every page load, we can also try to load from localStorage
   // so data persists without manual load every time.

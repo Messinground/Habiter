@@ -8,13 +8,14 @@ title: "Gallery"
 </header>
 
 <main>
-    <div id="gallery-container" class="gallery-grid">
-        <!-- Cards will be displayed here -->
-    </div>
     <div class="gallery-navigation">
         <button id="prev-page" class="gallery-nav-button">&lt; Previous</button>
         <span id="page-indicator">Page 1</span>
         <button id="next-page" class="gallery-nav-button">Next &gt;</button>
+    </div>
+
+    <div id="gallery-container" class="gallery-grid">
+        <!-- Cards will be displayed here -->
     </div>
 </main>
 
@@ -31,7 +32,16 @@ title: "Gallery"
         const CARDS_PER_PAGE = 9;
         let currentPage = 0;
         const savedCards = JSON.parse(localStorage.getItem('generatedCards') || '[]');
+        console.log('Loaded cards in gallery:', savedCards); // Add this
         const totalPages = Math.ceil(savedCards.length / CARDS_PER_PAGE);
+
+        if (savedCards.length === 0) {
+            galleryContainer.innerHTML = '<p style="text-align: center; padding: 20px;">No cards generated yet!</p>';
+            prevPageBtn.disabled = true;
+            nextPageBtn.disabled = true;
+            pageIndicator.textContent = 'Page 0 of 0';
+            return;
+        }
 
         function cardToImage(cardData) {
             return new Promise((resolve) => {
@@ -53,6 +63,7 @@ title: "Gallery"
                 wrapper.style.backgroundImage = "url('assets/images/parchment.jpeg')";
                 wrapper.style.backgroundSize = "cover";
 
+                
                 const content = document.createElement('div');
                 content.style.cssText = `
                     width: 100%;
